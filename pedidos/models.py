@@ -21,8 +21,42 @@ class Pedido(models.Model):
             through='PedidoProducto',  # referencia al modelo intermedio
             related_name='pedidos'
         )    
+    
+    def agregar_producto(self, producto, cantidad=1):
+        pedido_producto, creado = PedidoProducto.objects.get_or_create(
+            pedido = self, 
+            producto = producto,
+            defaults={'cantidad': cantidad}
+        )
+        if not creado:
+            pedido_producto.cantidad += cantidad
+            pedido_producto.save()
+        return pedido_producto
+    
+    def calcular_total(self):
+        total = sum([
+            pp.producto.precio * pp.cantidad for pp in self.pedidoproducto_set.all()
+        ])
+        return total
+    
+    @property
+    def cliente_nombre(self):
+        return self.usuario.nombre
+    
+    @property
+    def cliente_email(self):
+        return self.usuario.email
+    
+    @property
+    def cliente_telefono(self):
+        return self.usuario.telefono
+        
+        
+    
     def __str__(self):
-        return f"Pedido #{self.id} - {self.cliente.nombre}"
+        return f"Pedido #{self.id} - {self.usuario.nombre}"
+    
+    
 
 class PedidoProducto(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
