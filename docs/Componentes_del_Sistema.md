@@ -14,26 +14,16 @@ Este componente gestiona la identidad y autenticación de los usuarios registrad
     * `password` (Almacenada de forma segura, *hashed*)
     * `es_admin` (Booleano para identificar al "Cliente" administrador)
 
-### 2. Producto (Product)
+### 2. Pedido (Order)
 
-Representa los artículos de la tienda Herbalife que los usuarios pueden comprar.
-
-* **Atributos Principales:**
-    * `id_producto` (Clave primaria)
-    * `nombre`
-    * `descripcion`
-    * `precio`
-    * `imagen_url`
-
-### 3. Pedido (Order)
-
-Este componente centraliza la transacción de compra. Debe diseñarse para aceptar pedidos tanto de usuarios registrados como de "invitados" (sin *login*).
+Este componente gestiona la informacíon que intercambia el usuario con el chatbot. Debe diseñarse para aceptar pedidos tanto de usuarios registrados como de "invitados" (sin *login*).
 
 * **Atributos Principales:**
     * `id_pedido` (Clave primaria)
-    * `fecha_creacion`
+    * `fecha`
     * `estado` (Valores: "Pendiente", "Realizado")
     * `coste_total`
+    * `descripciónPedido`
 * **Atributos de Invitado (para checkout sin login):**
     * `nombre_cliente`
     * `telefono_cliente`
@@ -41,12 +31,17 @@ Este componente centraliza la transacción de compra. Debe diseñarse para acept
 * **Relaciones:**
     * `id_usuario` (FK a `Usuario`, *opcional/nulable* para permitir invitados).
 
-### 4. ItemPedido (Order Item)
+### 3. Cita (Session)
 
-Componente asociativo que vincula un `Pedido` específico con un `Producto` específico y almacena la cantidad deseada.
-
+Este componente gestiona las citas que los usuarios reservan a traves del chatbot. Incluye detalles como la fecha, hora y estado de la cita.
 * **Atributos Principales:**
-    * `cantidad`
+    * `id_cita` (Clave primaria)
+    * `fecha`
+    * `tipo`
+    * `estado` (Valores: "Reservada", "Completada", "Cancelada")
+    * **Atributos de Invitado (para checkout sin login):**
+    * `nombre_cliente`
+    * `telefono_cliente`
+    * `email_cliente`
 * **Relaciones:**
-    * `id_pedido` (FK a `Pedido`)
-    * `id_producto` (FK a `Producto`)
+    * `id_usuario` (FK a `Usuario`, *opcional/nulable* para permitir invitados).
