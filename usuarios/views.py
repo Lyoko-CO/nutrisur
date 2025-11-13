@@ -36,7 +36,7 @@ def register_view(request):
     else:
         form = CustomUserCreationForm()
         
-    return render(request, 'registro.html', {'form': form})
+    return render(request, 'usuarios/registro.html', {'form': form})
 
 @login_required
 def perfil_view(request):
@@ -53,4 +53,4 @@ def perfil_view(request):
     # automáticamente en las plantillas gracias a los 
     # context processors de Django.
     # Así que solo necesitamos renderizar la plantilla.
-    return render(request, 'perfil.html')
+    return render(request, 'usuarios/perfil.html')

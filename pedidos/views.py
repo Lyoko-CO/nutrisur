@@ -19,4 +19,4 @@ def lista_pedidos_view(request):
     context = {
         'pedidos': pedidos
     }
-    return render(request, 'pedidos.html', context)
+    return render(request, 'pedidos/pedidos.html', context)
