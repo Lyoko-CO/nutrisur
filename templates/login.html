@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Ingresar - NutriSur{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
+        <div class="card shadow-sm">
+            <div class="card-body p-5">
+                <h2 class="card-title text-center mb-4">Iniciar Sesión</h2>
+                
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                            Email
+                        </label>
+                        <input 
+                            type="email" 
+                            name="{{ form.username.name }}" 
+                            id="{{ form.username.id_for_label }}"
+                            class="form-control form-control-lg {% if form.username.errors %}is-invalid{% endif %}"
+                            required
+                            value="{{ form.username.value|default:'' }}"
+                        >
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}{{ error }}{% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">
+                            Contraseña
+                        </label>
+                        <input 
+                            type="password" 
+                            name="{{ form.password.name }}" 
+                            id="{{ form.password.id_for_label }}"
+                            class="form-control form-control-lg {% if form.password.errors %}is-invalid{% endif %}"
+                            required
+                        >
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}{{ error }}{% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            Ingresar
+                        </button>
+                    </div>
+                </form>
+                <div class="text-center mt-4">
+                    <p class="text-muted">
+                        ¿No tienes una cuenta? 
+                        <a href="{% url 'registro' %}">Regístrate aquí</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,69 +1,46 @@
+{% extends 'base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido a NutriSur</title>
-    
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    
-    <style>
-        .card-img-top {
-            width: 100%;
-            height: 200px; /* Altura fija para las imágenes */
-            object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
-        }
-        .card {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-    </style>
-</head>
-<body>
+{% block title %}Inicio - NutriSur{% endblock %}
 
-    <div class="container my-5">
+
+{% block content %}
+
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1>Bienvenido a NutriSur</h1>
+            <h2 class="h4 fw-light">¿Qué necesitas hoy?</h2>
+        </div>
+    </div>
+
+    <div class="row">
         
-        <div class="row mb-4">
-            <div class="col-12 text-center">
-                <img src="{% static 'images/logo.png' %}" alt="Logo de NutriSur" class="img-fluid mb-3" style="max-height: 100px;">
-                <h1>Bienvenido a NutriSur</h1>
-                <h2 class="h4 fw-light">¿Qué necesitas hoy?</h2>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <img src="{% static 'images/herbalife5.png' %}" class="card-img-top" alt="Comprar Productos" style="height: 200px; object-fit: cover;">
+                <div class="card-body text-center d-grid">
+                    <h3 class="card-title">Comprar Productos</h3>
+                    <p class="card-text">Navega por nuestro catálogo de nutrición.</p>
+                    <a href="#" class="btn btn-primary btn-lg mt-2">
+                        🛒 Ir a Productos
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div class="row">
-            
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
-                    <img src="{% static 'images/herbalife5.png' %}" class="card-img-top" alt="Comprar Productos">
-                    <div class="card-body text-center d-grid">
-                        <h3 class="card-title">Comprar Productos</h3>
-                        <p class="card-text">Navega por nuestro catálogo de nutrición.</p>
-                        <a href="#" class="btn btn-primary btn-lg mt-2">
-                            🛒 Ir a Productos
-                        </a>
-                    </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <img src="{% static 'images/masaje2.jpg' %}" class="card-img-top" alt="Reservar Cita" style="height: 200px; object-fit: cover;">
+                <div class="card-body text-center d-grid">
+                    <h3 class="card-title">Reservar Cita</h3>
+                    <p class="card-text">Consulta nuestros servicios de bienestar.</p>
+                    <a href="#" class="btn btn-success btn-lg mt-2">
+                        📅 Reservar Cita
+                    </a>
                 </div>
             </div>
+        </div>
 
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
-                    <img src="{% static 'images/masaje2.jpg' %}" class="card-img-top" alt="Reservar Cita">
-                    <div class="card-body text-center d-grid">
-                        <h3 class="card-title">Reservar Cita</h3>
-                        <p class="card-text">Consulta nuestros servicios de bienestar.</p>
-                        <a href="#" class="btn btn-success btn-lg mt-2">
-                            📅 Reservar Cita
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-        </div> </div> <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-</body>
-</html>
+    </div>
+    
+{% endblock %}

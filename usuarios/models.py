@@ -10,8 +10,6 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("El email es obligatorio para crear un usuario.")
         if not nombre:
             raise ValueError("El nombre es obligatorio para crear un usuario.")
-        if not telefono:
-            raise ValueError("El teléfono es obligatorio para crear un usuario.")
         
         
         email = self.normalize_email(email)

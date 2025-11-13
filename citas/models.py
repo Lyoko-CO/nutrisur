@@ -6,12 +6,12 @@ from django.conf import settings
 class Cita(models.Model):
     
     usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,                        
-        on_delete=models.CASCADE, 
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
         related_name='citas')
     
     fecha = models.DateTimeField()
-    tipo  = models.CharField()
+    tipo  = models.CharField(max_length=100)
     
     ESTADOS = [
         ('PENDIENTE', 'Pendiente'),
