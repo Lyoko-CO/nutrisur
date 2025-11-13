@@ -28,9 +28,8 @@ from usuarios import views as usuarios_views
 urlpatterns = [
     path('', views.home_view, name='home'),
     path('registro/', usuarios_views.register_view, name='registro'),
-    path('login/', 
-         auth_views.LoginView.as_view(template_name='login.html'), 
-         name='login'),
+    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('perfil/', usuarios_views.perfil_view, name='perfil'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('admin/', admin.site.urls),
 ]

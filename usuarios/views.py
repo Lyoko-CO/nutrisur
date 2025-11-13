@@ -6,6 +6,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages 
 from .forms import CustomUserCreationForm
 
+from django.contrib.auth.decorators import login_required
+
 def register_view(request):
     """
     Gestiona el registro de nuevos usuarios.
@@ -35,3 +37,20 @@ def register_view(request):
         form = CustomUserCreationForm()
         
     return render(request, 'registro.html', {'form': form})
+
+@login_required
+def perfil_view(request):
+    """
+    Muestra la página de perfil del usuario logueado.
+    
+    El decorador @login_required se encarga de:
+    1. Comprobar si request.user está autenticado.
+    2. Si no lo está, redirige al usuario a la página de LOGIN_URL
+        (que ya definimos en settings.py).
+    """
+    
+    # El objeto 'user' (request.user) ya está disponible
+    # automáticamente en las plantillas gracias a los 
+    # context processors de Django.
+    # Así que solo necesitamos renderizar la plantilla.
+    return render(request, 'perfil.html')
