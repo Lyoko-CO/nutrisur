@@ -25,11 +25,14 @@ from . import views
 
 from usuarios import views as usuarios_views
 
+from pedidos import views as pedidos_views
+
 urlpatterns = [
     path('', views.home_view, name='home'),
     path('registro/', usuarios_views.register_view, name='registro'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('perfil/', usuarios_views.perfil_view, name='perfil'),
+    path('mis-pedidos/', pedidos_views.lista_pedidos_view, name='mis_pedidos'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('admin/', admin.site.urls),
 ]
