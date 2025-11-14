@@ -30,6 +30,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('pedidos/', include('pedidos.urls')),
     path('usuarios/', include('usuarios.urls')),
+    path('citas/', include('citas.urls')),
 ]
 
 if settings.DEBUG:
