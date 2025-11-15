@@ -25,6 +25,7 @@ def lista_pedidos_view(request):
     }
     return render(request, 'pedidos/pedidos.html', context)
 
+@login_required
 def chatbot_view(request):
     
     pedido = Pedido.objects.get_or_create(
