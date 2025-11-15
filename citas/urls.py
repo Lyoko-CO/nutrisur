@@ -3,5 +3,5 @@ from .views import CitaListView
 
 urlpatterns = [
     # Citas se accede vía /citas/
-    path('', CitaListView.as_view(), name='mis_citas'),
+    path('mis-citas', CitaListView.as_view(), name='mis_citas'),
 ]
