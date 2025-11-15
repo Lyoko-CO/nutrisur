@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Nuevo Pedido - Chatbot{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2 class="text-center mb-4">Haz tu pedido</h2>
+        
+        <div id="chat-window" class="border p-3 mb-3" style="height: 400px; overflow-y: scroll; background: #f9f9f9;">
+            <div class="chat-message bot">
+                <strong>NutriBot:</strong> ¡Hola, {{ user.nombre|default:user.email }}! Estoy aquí para tomar tu pedido. ¿Qué te gustaría?
+            </div>
+        </div>
+
+        <form id="chat-form">
+            <div class="input-group">
+                <input type="text" id="chat-input" class="form-control" placeholder="Escribe tu mensaje..." required>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </div>
+        </form>
+        
+        <h3 class="mt-4">Total actual: <span id="total-pedido">{{ pedido.calcular_total|default:0.0 }}</span>€</h3>
+    </div>
+</div>
+
+<script>
+    // URL de nuestra API
+    const procesarMensajeURL = "{% url 'procesar_mensaje_pedido' %}";
+    // Token CSRF para la petición POST
+    const csrfToken = "{{ csrf_token }}";
+
+    const chatWindow = document.getElementById('chat-window');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const totalPedidoSpan = document.getElementById('total-pedido');
+
+    // Función para añadir mensajes a la ventana
+    function addMessage(sender, message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('chat-message', sender.toLowerCase());
+        messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
+        chatWindow.appendChild(messageDiv);
+        // Scroll hasta abajo
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    // Manejar el envío del formulario
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const mensaje = chatInput.value.trim();
+        if (mensaje === "") return;
+
+        // 1. Mostrar el mensaje del usuario
+        addMessage('Tú', mensaje);
+        chatInput.value = ""; // Limpiar input
+
+        try {
+            // 2. Enviar el mensaje al backend (views.py)
+            const response = await fetch(procesarMensajeURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ mensaje: mensaje })
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+
+            const data = await response.json();
+            
+            // 3. Mostrar la respuesta del bot
+            addMessage('NutriBot', data.respuesta_bot);
+
+            // 4. Actualizar el total si existe
+            if (data.total_pedido !== undefined) {
+                // ¡Solución! Convertimos el string a número (float)
+                const totalNumerico = parseFloat(data.total_pedido);
+            
+                // Ahora sí podemos usar .toFixed() sobre el número
+                totalPedidoSpan.textContent = totalNumerico.toFixed(2);
+            }
+            
+            // 5. Si el pedido se finaliza, desactivar el input
+            if (data.status === 'finalizado') {
+                chatInput.disabled = true;
+                chatForm.querySelector('button').disabled = true;
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            addMessage('NutriBot', 'Lo siento, ha ocurrido un error de conexión. Inténtalo de nuevo.');
+        }
+    });
+
+</script>
+{% endblock %}

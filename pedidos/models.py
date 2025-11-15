@@ -7,12 +7,14 @@ from productos.models import Producto
 # Create your models here.
 class Pedido(models.Model):
     ESTADOS =[
+        ('B', 'Borrador'),
         ('P', 'Pendiente'),
         ('R', 'Realizado')
     ]
     
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
+    productos_chat = models.JSONField(default=list)
     
     fecha_pedido = models.DateTimeField(default=timezone.now)
     estado = models.CharField(max_length=20, choices=ESTADOS, default='P')
@@ -38,6 +40,9 @@ class Pedido(models.Model):
             pp.producto.precio * pp.cantidad for pp in self.pedidoproducto_set.all()
         ])
         return total
+    
+    def agregar_producto_chat(self, producto):
+        self.productos_chat.append(producto)
     
     @property
     def cliente_nombre(self):
