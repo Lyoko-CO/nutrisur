@@ -1,11 +1,29 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Nuevo Pedido - Chatbot{% endblock %}
 
 {% block content %}
+
+<link rel="stylesheet" href="{% static 'pedidos/css/chatbot.css' %}">
+
 <div class="row">
     <div class="col-md-8 offset-md-2">
         <h2 class="text-center mb-4">Haz tu pedido</h2>
+
+        <div class="escaparate-container">
+            <div class="productos-scroll">
+                {% for producto in productos_escaparate %}
+                    <div class="producto-mini" onclick="copiarNombre('{{ producto.nombre }}')" title="{{ producto.nombre }} - {{ producto.precio }}€">
+                        <div class="img-wrapper">
+                            <img data-src="{{ producto.enlace_img }}" alt="{{ producto.nombre }}" loading="lazy">
+                        </div>
+                    </div>
+                {% empty %}
+                    <p style="padding:10px; font-size:0.8rem;">Cargando productos...</p>
+                {% endfor %}
+            </div>
+        </div>
         
         <div id="chat-window" class="border p-3 mb-3" style="height: 400px; overflow-y: scroll; background: #f9f9f9;">
             <div class="chat-message bot">
@@ -95,6 +113,39 @@
             console.error('Error:', error);
             addMessage('NutriBot', 'Lo siento, ha ocurrido un error de conexión. Inténtalo de nuevo.');
         }
+    });
+
+    function copiarNombre(nombreProducto) {
+        const inputChat = document.getElementById('chat-input');
+        
+        if (inputChat) {
+            inputChat.value = "Quiero " + nombreProducto;
+            inputChat.focus();
+        } else {
+            console.error("Error: No encuentro el input con id 'chat-input'");
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const productImages = document.querySelectorAll('.img-wrapper img');
+
+        productImages.forEach(img => {
+            const imageUrl = img.dataset.src;
+            const imgWrapper = img.closest('.img-wrapper');
+
+            const tempImg = new Image();
+            tempImg.src = imageUrl;
+
+            tempImg.onload = () => {
+                img.src = imageUrl; 
+                imgWrapper.classList.add('loaded');
+            };
+
+            tempImg.onerror = () => { 
+                imgWrapper.classList.add('loaded');
+                console.error('Error al cargar la imagen:', imageUrl);
+            };
+        });
     });
 
 </script>

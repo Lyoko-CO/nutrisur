@@ -32,9 +32,12 @@ def chatbot_view(request):
         usuario = request.user,
         estado = 'B'
     )
+
+    productos_escaparate = Producto.objects.all()[:10]
     
     context = {
-        'pedido': pedido
+        'pedido': pedido,
+        'productos_escaparate': productos_escaparate
     }
     
     return render(request, 'pedidos/chatbot.html', context)

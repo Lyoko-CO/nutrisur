@@ -1,0 +1,94 @@
+/* --- CONTENEDOR PRINCIPAL --- */
+.escaparate-container {
+    width: 100%;
+    background-color: #fff;
+    padding: 10px 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+/* --- CARRUSEL --- */
+.productos-scroll {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 5px 10px; 
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.productos-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* --- TARJETA DE PRODUCTO --- */
+.producto-mini {
+    flex: 0 0 auto;
+    width: 80px;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.producto-mini:hover {
+    transform: scale(1.05);
+}
+
+/* --- CONTENEDOR DE LA IMAGEN (QUIETO) --- */
+.img-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    overflow: hidden;
+    position: relative;
+    background-color: #f8f8f8;
+    
+    /* IMPORTANTE: Quitamos la animación de aquí para que la caja no gire */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- RUEDA DE CARGA (GIRANDO) --- */
+/* Creamos un elemento virtual que flota encima */
+.img-wrapper::after {
+    content: "";
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: 3px solid #e0e0e0;    /* Borde gris claro */
+    border-top: 3px solid #3498db; /* Parte azul que gira */
+    border-radius: 50%;
+    animation: spin 1s linear infinite; /* Solo gira esto */
+    z-index: 1;
+}
+
+/* --- CUANDO CARGA LA FOTO --- */
+/* Gracias al JS, cuando se añade la clase .loaded, ocultamos la rueda */
+.img-wrapper.loaded::after {
+    display: none;
+}
+
+/* --- ANIMACIÓN DE GIRO --- */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* --- LA IMAGEN --- */
+.img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: relative;
+    z-index: 2;
+    opacity: 0; /* Invisible al principio */
+    transition: opacity 0.3s ease;
+}
+
+/* La imagen aparece suavemente */
+.img-wrapper.loaded img {
+    opacity: 1;
+}
