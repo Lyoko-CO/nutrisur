@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Perfil - NutriSur{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+        
+        <div class="card shadow-sm">
+            <div class="card-header bg-light py-3">
+                <h2 class="mb-0">Mi Perfil</h2>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                
+                <div class="mb-3">
+                    <h5 class="card-title text-muted">Nombre:</h5>
+                    <p class="card-text fs-4">{{ user.nombre }}</p>
+                </div>
+                
+                <hr>
+
+                <div class="mb-3">
+                    <h5 class="card-title text-muted">Email (Usuario):</h5>
+                    <p class="card-text fs-4">{{ user.email }}</p>
+                </div>
+
+                <hr>
+
+                <div class="mb-3">
+                    <h5 class="card-title text-muted">Teléfono:</h5>
+                    <p class="card-text fs-4">
+                        {{ user.telefono|default:"No especificado" }}
+                    </p>
+                </div>
+                
+                <hr>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
