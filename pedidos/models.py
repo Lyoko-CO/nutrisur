@@ -7,12 +7,14 @@ from productos.models import Producto
 # Create your models here.
 class Pedido(models.Model):
     ESTADOS =[
+        ('B', 'Borrador'),
         ('P', 'Pendiente'),
         ('R', 'Realizado')
     ]
     
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
+    productos_chat = models.JSONField(default=list)
     
     fecha_pedido = models.DateTimeField(default=timezone.now)
     estado = models.CharField(max_length=20, choices=ESTADOS, default='P')
@@ -39,6 +41,9 @@ class Pedido(models.Model):
         ])
         return total
     
+    def agregar_producto_chat(self, producto):
+        self.productos_chat.append(producto)
+    
     @property
     def cliente_nombre(self):
         return self.usuario.nombre
@@ -62,6 +67,10 @@ class PedidoProducto(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=1)
+    
+    @property
+    def subtotal(self):
+        return self.producto.precio * self.cantidad
     
     class Meta:
         unique_together = ('pedido', 'producto')

@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('fecha', models.DateTimeField()),
-                ('tipo', models.CharField()),
+                ('tipo', models.CharField(max_length=100)),
                 ('estado', models.CharField(choices=[('PENDIENTE', 'Pendiente'), ('CONFIRMADA', 'Confirmada'), ('CANCELADA', 'Cancelada'), ('FINALIZADA', 'Finalizada')], default='PENDIENTE', max_length=10)),
                 ('usuario', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='citas', to=settings.AUTH_USER_MODEL)),
             ],

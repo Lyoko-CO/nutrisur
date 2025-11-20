@@ -1,0 +1,103 @@
+/* --- CONTENEDOR PRINCIPAL --- */
+.escaparate-container {
+    width: 100%;
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    max-height: 450px; /* Damos un poco más de altura por si acaso */
+    overflow-y: auto;
+}
+
+/* --- CUADRÍCULA (GRID) --- */
+.productos-scroll {
+    display: grid;
+    /* CAMBIO AQUÍ: 3 columnas (antes eran 4) */
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 15px;
+    padding: 5px; 
+}
+
+/* --- TARJETA DE PRODUCTO --- */
+.producto-mini {
+    width: 100%;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    padding: 8px; /* Un poco más de relleno */
+    border-radius: 8px;
+    border: 1px solid transparent; /* Evita saltos al hacer hover */
+}
+
+.producto-mini:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12); /* Sombra un poco más pronunciada */
+    background-color: #fff;
+    border-color: #eee;
+}
+
+/* --- CONTENEDOR DE LA IMAGEN --- */
+.img-wrapper {
+    width: 100%;
+    /* AUMENTAMOS UN POCO MÁS: Para aprovechar el ancho extra de las 3 columnas */
+    height: 160px; 
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+    overflow: hidden;
+    position: relative;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+/* --- RUEDA DE CARGA --- */
+.img-wrapper::after {
+    content: "";
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: 3px solid #e0e0e0;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1;
+}
+
+.img-wrapper.loaded::after {
+    display: none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* --- LA IMAGEN --- */
+.img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    padding: 5px; /* Un pequeño margen interno para que la foto no toque los bordes */
+}
+
+.img-wrapper.loaded img {
+    opacity: 1;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .productos-scroll {
+        /* En móvil mantenemos 2 columnas, se verán muy bien */
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .img-wrapper {
+        height: 130px; /* Ajuste ligero para móvil */
+    }
+}
