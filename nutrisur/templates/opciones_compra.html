@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Opciones de Compra - NutriSur{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row text-center mb-5">
+        <div class="col-12">
+            <h2 class="display-4">¿Cómo prefieres hacer tu pedido?</h2>
+            <p class="lead text-muted">Elige la opción que mejor se adapte a ti.</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        
+        <div class="col-md-5 mb-4">
+            <div class="card h-100 shadow-sm hover-effect">
+                <div class="card-body p-5 d-flex flex-column justify-content-center align-items-center">
+                    <div class="display-1 mb-3">🤖</div>
+                    <h3 class="card-title">Asistente Virtual</h3>
+                    <p class="card-text text-center">
+                        Habla con nuestra IA. Te recomendará productos y podrás hacer el pedido sin salir de aquí.
+                    </p>
+                    <a href="{% url 'chatbot_pedidos' %}" class="btn btn-primary btn-lg mt-3">
+                        💬 Usar el Chatbot
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5 mb-4">
+            <div class="card h-100 shadow-sm hover-effect">
+                <div class="card-body p-5 d-flex flex-column justify-content-center align-items-center">
+                    <div class="display-1 mb-3">🌍</div>
+                    <h3 class="card-title">Web Oficial</h3>
+                    <p class="card-text text-center">
+                        Visita la tienda oficial de Natursur si prefieres navegar por el catálogo completo tú mismo.
+                    </p>
+                    <a href="https://natursur.herbalife.com" target="_blank" class="btn btn-outline-success btn-lg mt-3">
+                        Ir a Natursur 🔗
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    /* Efecto visual al pasar el ratón por encima */
+    .hover-effect {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .hover-effect:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
+        border-color: #18bc9c; /* Color verde success de tu tema */
+    }
+</style>
+{% endblock %}

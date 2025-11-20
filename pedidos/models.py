@@ -68,6 +68,10 @@ class PedidoProducto(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=1)
     
+    @property
+    def subtotal(self):
+        return self.producto.precio * self.cantidad
+    
     class Meta:
         unique_together = ('pedido', 'producto')
         

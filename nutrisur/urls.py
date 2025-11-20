@@ -27,9 +27,11 @@ from pedidos import views as pedidos_views
 
 urlpatterns = [
     path('', views.home_view, name='home'),
+    path('comprar/', views.opciones_compra_view, name='opciones_compra'),
     path('admin/', admin.site.urls),
     path('pedidos/', include('pedidos.urls')),
     path('usuarios/', include('usuarios.urls')),
+    path('api/actualizar-cantidad/', pedidos_views.actualizar_cantidad_view, name="actualizar_cantidad"),
 ]
 
 if settings.DEBUG:
