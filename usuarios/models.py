@@ -41,6 +41,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)   
     is_active = models.BooleanField(default=True)   
     fecha_ingreso = models.DateTimeField(default=timezone.now)
+    is_vip = models.BooleanField(default=False, verbose_name="Cliente Habitual")
     
     objects = CustomUserManager()
     
