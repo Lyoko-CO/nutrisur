@@ -17,6 +17,31 @@
                 <div class="card-body p-0">
                     <div class="escaparate-container">
                         <div class="productos-scroll">
+
+                            {% if historial %}
+                                <div class="section-divider historial-header">
+                                    <span><i class="bi bi-clock-history"></i> Recientes</span>
+                                </div>
+
+                                {% for producto in historial %}
+                                    <div class="producto-mini" onclick="copiarNombre('{{ producto.nombre }}')" title="{{ producto.nombre }}">
+                                        <div class="img-wrapper">
+                                            <img data-src="{{ producto.enlace_img }}" alt="{{ producto.nombre }}" loading="lazy">
+                                        </div>
+                                        <div class="producto-info">
+                                            <p class="prod-nombre">{{ producto.nombre }}</p>
+                                            <p class="prod-precio">{{ producto.precio }} €</p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                                <div class="section-divider catalogo-header">
+                                    <span>Catálogo</span>
+                                </div>
+
+                            {% endif %}
+
+
                             {% for producto in productos_escaparate %}
                                 <div class="producto-mini" onclick="copiarNombre('{{ producto.nombre }}')" title="{{ producto.nombre }} - {{ producto.precio }}€">
                                     <div class="img-wrapper">

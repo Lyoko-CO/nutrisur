@@ -29,6 +29,29 @@
     display: none;
 }
 
+.section-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    user-select: none;
+    
+    min-width: 40px; 
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px dashed #ddd;
+    
+    writing-mode: vertical-rl; 
+    transform: rotate(180deg); 
+}
+
+.historial-header { color: #e67e22; }
+.catalogo-header { color: #7f8c8d; }
+
 .producto-mini {
     min-width: 140px;
     width: 100%;
@@ -53,7 +76,8 @@
     margin-bottom: 6px;
 }
 
-/* --- ESTILOS ESPECÍFICOS PARA ESCRITORIO --- */
+
+/* --- ESTILOS PARA ESCRITORIO --- */
 @media (min-width: 992px) {
 
     #chat-window {
@@ -99,7 +123,28 @@
         font-size: 1rem;
         margin-bottom: 4px;
     }
+
+    .section-divider {
+        grid-column: 1 / -1; /* Ocupar todo el ancho */
+        width: 100%;
+        
+        writing-mode: horizontal-tb; /* Texto horizontal normal */
+        transform: none;
+        
+        min-height: 40px;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid #eee;
+        justify-content: flex-start; /* Alinear a la izquierda */
+        padding-top: 15px;
+        margin-bottom: 5px;
+    }
+    
+    .catalogo-header {
+        margin-top: 20px; /* Separación extra antes del catálogo */
+    }
 }
+
 
 /* --- ESTILOS COMUNES --- */
 .producto-mini:hover {
