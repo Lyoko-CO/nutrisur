@@ -3,95 +3,105 @@
 
 {% block title %} Nuevo Pedido - Chatbot {% endblock %}
 
-{% block content %} <link rel="stylesheet" href="{% static 'pedidos/css/chatbot.css' %}">
+{% block content %} 
+<link rel="stylesheet" href="{% static 'pedidos/css/chatbot.css' %}">
 
-<div class="row">
-    <div class="col-md-8 offset-md-2">
+<div class="container-fluid px-4"> <h2 class="text-center mb-4">Haz tu pedido</h2>
+
+    <div class="row">
         
-        <h2 class="text-center mb-4">Haz tu pedido</h2>
-
-        <div class="escaparate-container">
-            <div class="productos-scroll">
-                {% for producto in productos_escaparate %}
-                    <div class="producto-mini" onclick="copiarNombre('{{ producto.nombre }}')" title="{{ producto.nombre }} - {{ producto.precio }}€">
-                        <div class="img-wrapper">
-                            <img data-src="{{ producto.enlace_img }}" alt="{{ producto.nombre }}" loading="lazy">
-                        </div>
-                        <div class="producto-info">
-                            <p class="prod-nombre">{{ producto.nombre }}</p>
-                            <p class="prod-precio">{{ producto.precio }} €</p>
+        <div class="col-12 col-lg-5 mb-4 order-1 order-lg-1">
+            <div class="card shadow-sm"> <div class="card-header bg-white">
+                    <h5 class="mb-0 text-center">Productos</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="escaparate-container">
+                        <div class="productos-scroll">
+                            {% for producto in productos_escaparate %}
+                                <div class="producto-mini" onclick="copiarNombre('{{ producto.nombre }}')" title="{{ producto.nombre }} - {{ producto.precio }}€">
+                                    <div class="img-wrapper">
+                                        <img data-src="{{ producto.enlace_img }}" alt="{{ producto.nombre }}" loading="lazy">
+                                    </div>
+                                    <div class="producto-info">
+                                        <p class="prod-nombre">{{ producto.nombre }}</p>
+                                        <p class="prod-precio">{{ producto.precio }} €</p>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <p class="text-center p-3">Cargando productos...</p>
+                            {% endfor %}
                         </div>
                     </div>
-                {% empty %}
-                    <p style="padding:10px; font-size:0.8rem;">Cargando productos...</p>
-                {% endfor %}
-            </div>
-        </div>
-        
-        <div id="chat-window" class="border p-3 mb-3" style="height: 400px; overflow-y: scroll; background: #f9f9f9;">
-            <div class="chat-message bot">
-                <strong>NutriBot:</strong> ¡Hola, {{ user.nombre|default:user.email }}! Estoy aquí para tomar tu pedido. ¿Qué te gustaría?
-            </div>
-        </div>
-
-        <form id="chat-form">
-            <div class="input-group">
-                <input type="text" id="chat-input" class="form-control" placeholder="Escribe tu mensaje..." required>
-                <button type="submit" class="btn btn-primary">Enviar</button>
-            </div>
-        </form>
-        
-        <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-            <h3>Total actual: <span id="total-pedido">{{ pedido.calcular_total|floatformat:2 }}</span>€</h3>
-        </div>
-
-        <div class="card shadow-sm">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Tu Carrito</h5>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0 align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Producto</th>
-                                <th class="text-center">Cantidad</th>
-                                <th class="text-end">Precio</th>
-                                <th class="text-end">Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody id="lista-items-pedido">
-                            {% for item in pedido.pedidoproducto_set.all %}
-                            <tr id="fila-prod-{{ item.producto.id }}">
-                                <td>{{ item.producto.nombre }}</td>
-                                <td class="text-center">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <button type="button" class="btn btn-outline-secondary" data-id="{{ item.producto.id }}" onclick="actualizarCantidad(this.dataset.id, 'decrementar')">-</button>
-                                        <span class="btn btn-light disabled text-dark fw-bold" style="width: 40px;">{{ item.cantidad }}</span>
-                                        <button type="button" class="btn btn-outline-secondary" data-id="{{ item.producto.id }}" onclick="actualizarCantidad(this.dataset.id, 'incrementar')">+</button>
-                                    </div>
-                                </td>
-                                <td class="text-end">{{ item.producto.precio }}€</td>
-                                <td class="text-end fw-bold">{{ item.subtotal }}€</td>
-                            </tr>
-                            {% empty %}
-                            <tr id="carrito-vacio">
-                                <td colspan="4" class="text-center text-muted py-3">Tu carrito está vacío</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
-        
-        <div class="mb-5"></div>
 
+        <div class="col-12 col-lg-7 order-2 order-lg-2 mb-4">
+            <div id="chat-window" class="border p-3 mb-3 shadow-sm rounded" style="background: #f9f9f9;">
+                <div class="chat-message bot">
+                    <strong>NutriBot:</strong> ¡Hola, {{ user.nombre|default:user.email }}! Estoy aquí para tomar tu pedido. ¿Qué te gustaría?
+                </div>
+            </div>
+
+            <form id="chat-form">
+                <div class="input-group input-group-lg">
+                    <input type="text" id="chat-input" class="form-control" placeholder="Ej: Quiero proteína de suero..." required>
+                    <button type="submit" class="btn btn-primary px-4">Enviar</button>
+                </div>
+            </form>
+        </div>
+
+    </div> <div class="row">
+        <div class="col-12"> <hr class="my-4"> <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3>Total actual: <span id="total-pedido">{{ pedido.calcular_total|floatformat:2 }}</span>€</h3>
+            </div>
+
+            <div class="card shadow-sm mb-5">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Tu Carrito</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-end">Precio</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lista-items-pedido">
+                                {% for item in pedido.pedidoproducto_set.all %}
+                                <tr id="fila-prod-{{ item.producto.id }}">
+                                    <td>{{ item.producto.nombre }}</td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-secondary" data-id="{{ item.producto.id }}" onclick="actualizarCantidad(this.dataset.id, 'decrementar')">-</button>
+                                            <span class="btn btn-light disabled text-dark fw-bold" style="width: 40px;">{{ item.cantidad }}</span>
+                                            <button type="button" class="btn btn-outline-secondary" data-id="{{ item.producto.id }}" onclick="actualizarCantidad(this.dataset.id, 'incrementar')">+</button>
+                                        </div>
+                                    </td>
+                                    <td class="text-end">{{ item.producto.precio }}€</td>
+                                    <td class="text-end fw-bold">{{ item.subtotal }}€</td>
+                                </tr>
+                                {% empty %}
+                                <tr id="carrito-vacio">
+                                    <td colspan="4" class="text-center text-muted py-3">Tu carrito está vacío</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 
 <script>
-    // URL de nuestra API
+    // URL de la API
     const procesarMensajeURL = "{% url 'procesar_mensaje_pedido' %}";
 
     const actualizarCantidadURL = "{% url 'actualizar_cantidad' %}";
@@ -105,7 +115,7 @@
     const listaItemsBody = document.getElementById('lista-items-pedido')
 
     function renderizarDesglose(items) {
-        listaItemsBody.innerHTML = ''; // Limpiamos la tabla
+        listaItemsBody.innerHTML = '';
 
         if (items.length === 0) {
             listaItemsBody.innerHTML = `
@@ -146,9 +156,7 @@
 
             const data = await response.json();
             if (data.status === 'ok') {
-                // Actualizamos Total
                 totalPedidoSpan.textContent = data.total_pedido.toFixed(2);
-                // Actualizamos Tabla
                 renderizarDesglose(data.items);
             }
         } catch (error) {
@@ -181,8 +189,7 @@
             if (data.total_pedido !== undefined) {
                 totalPedidoSpan.textContent = parseFloat(data.total_pedido).toFixed(2);
             }
-            
-            // ACTUALIZAMOS EL DESGLOSE SI VIENEN ITEMS
+
             if (data.items) {
                 renderizarDesglose(data.items);
             }
@@ -204,7 +211,6 @@
         messageDiv.classList.add('chat-message', sender.toLowerCase());
         messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
         chatWindow.appendChild(messageDiv);
-        // Scroll hasta abajo
         chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
@@ -217,7 +223,7 @@
 
         // 1. Mostrar el mensaje del usuario
         addMessage('Tú', mensaje);
-        chatInput.value = ""; // Limpiar input
+        chatInput.value = "";
 
         try {
             // 2. Enviar el mensaje al backend (views.py)
@@ -241,10 +247,7 @@
 
             // 4. Actualizar el total si existe
             if (data.total_pedido !== undefined) {
-                // ¡Solución! Convertimos el string a número (float)
                 const totalNumerico = parseFloat(data.total_pedido);
-            
-                // Ahora sí podemos usar .toFixed() sobre el número
                 totalPedidoSpan.textContent = totalNumerico.toFixed(2);
             }
             
