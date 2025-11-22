@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Reserva tu Cita {% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'citas/css/chatbot.css' %}">
+
+<div class="container-fluid px-4 py-4">
+    <h2 class="text-center mb-4 text-dark" style="color: #000000 !important;">Reserva tu masaje</h2>
+
+    <div class="row">
+        
+        <div class="col-12 col-lg-5 mb-4 order-2 order-lg-1">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white text-center py-3">
+                    <h5 class="mb-0 text-muted"><i class="bi bi-calendar-check"></i> Datos de la reserva</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Concepto</th>
+                                    <th class="text-end pe-4">Detalle</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-resumen">
+                                <tr>
+                                    <td class="ps-4 text-secondary">Día</td>
+                                    <td class="text-end pe-4 fw-bold text-primary" id="res-fecha">
+                                        {{ cita_actual.fecha|date:"d/m/Y"|default:"-" }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4 text-secondary">Hora</td>
+                                    <td class="text-end pe-4 fw-bold" id="res-hora">
+                                        {% if cita_actual.fecha %}
+                                            {% if cita_actual.fecha.hour == 0 and cita_actual.fecha.minute == 0 %}
+                                                <span class="text-danger">Pendiente</span>
+                                            {% else %}
+                                                {{ cita_actual.fecha|date:"H:i" }}
+                                            {% endif %}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4 text-secondary">Observaciones</td>
+                                    <td class="text-end pe-4 text-muted fst-italic" id="res-obs">
+                                        {{ cita_actual.observaciones|default:"-" }}
+                                    </td>
+                                </tr>
+                                <tr class="table-light">
+                                    <td class="ps-4 fw-bold">Estado</td>
+                                    <td class="text-end pe-4" id="res-estado">
+                                        {% if cita_actual.estado == 'PENDIENTE' %}
+                                            <span class="badge bg-success">Confirmada</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">En proceso</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="border-top"></div>
+                        <div class="bg-light p-4 rounded-bottom">
+                            
+                            <h6 class="text-uppercase text-muted fw-bold mb-4" style="font-size: 0.8rem; letter-spacing: 1px;">
+                                Información de interés
+                            </h6>
+
+                            <div class="d-flex mb-3 align-items-start">
+                                <div class="icon-box text-danger bg-white shadow-sm me-3">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                </div>
+                                <div>
+                                    <span class="d-block fw-bold text-dark" style="font-size: 0.95rem;">Dirección</span>
+                                    <span class="text-muted small">Av. Santa Lucia 62,<br>Alcalá de Guadaíra, Sevilla</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex mb-3 align-items-start">
+                                <div class="icon-box text-warning bg-white shadow-sm me-3">
+                                    <i class="bi bi-clock-fill"></i>
+                                </div>
+                                <div>
+                                    <span class="d-block fw-bold text-dark" style="font-size: 0.95rem;">Horario</span>
+                                    <span class="text-muted small">10:00 a 14:00<br>17:00 a 21:00</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-start">
+                                <div class="icon-box text-primary bg-white shadow-sm me-3">
+                                    <i class="bi bi-hourglass-split"></i>
+                                </div>
+                                <div>
+                                    <span class="d-block fw-bold text-dark" style="font-size: 0.95rem;">Duración sesión</span>
+                                    <span class="text-muted small">1 hora aprox.</span>
+                                </div>
+                            </div>
+
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-7 mb-4 order-1 order-lg-2">
+            <div class="card shadow-sm border-0">
+                
+                <div class="card-body p-0">
+                    <div id="chat-window" >
+                        <div class="chat-message bot" style="background: #f9f9f9;">
+                            <strong>NutriBot:</strong> {{ mensaje_inicial|safe }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-white py-3">
+                    <form id="chat-form">
+                        <div class="input-group input-group-lg">
+                            <input type="text" id="chat-input" class="form-control" 
+                                   placeholder="Escribe aquí (ej: 'El martes por la tarde')..." 
+                                   autocomplete="off" required>
+                            <button type="submit" class="btn btn-dark px-4">Enviar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const procesarMensajeURL = "{% url 'procesar_mensaje_cita' %}"; 
+    const csrfToken = "{{ csrf_token }}";
+    
+    const chatWindow = document.getElementById('chat-window');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+
+    // Referencias a celdas de la tabla
+    const resFecha = document.getElementById('res-fecha');
+    const resHora = document.getElementById('res-hora');
+    const resObs = document.getElementById('res-obs');
+    const resEstado = document.getElementById('res-estado');
+
+    function addMessage(sender, text) {
+        const div = document.createElement('div');
+        div.className = `chat-message ${sender === 'Tú' ? 'user' : 'bot'}`;
+        div.innerHTML = `<strong>${sender}:</strong> ${text}`;
+        chatWindow.appendChild(div);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function actualizarTabla(datos) {
+        if (!datos) {
+            resFecha.innerText = "-";
+            resHora.innerText = "-";
+            resObs.innerText = "-";
+            resEstado.innerHTML = '<span class="badge bg-secondary">Reiniciado</span>';
+            return;
+        }
+
+        // 1. Fecha
+        resFecha.innerText = datos.fecha || "-";
+
+        // 2. Hora
+        if (datos.hora === 'Pendiente') {
+            resHora.innerHTML = '<span class="text-danger fw-bold">?</span>';
+        } else {
+            resHora.innerText = datos.hora || "-";
+        }
+
+        // 3. Observaciones
+        resObs.innerText = datos.observaciones || "-";
+
+        // 4. Estado
+        if (datos.estado === 'PENDIENTE') {
+            resEstado.innerHTML = '<span class="badge bg-success">Confirmada</span>';
+        } else {
+            resEstado.innerHTML = '<span class="badge bg-warning text-dark">En proceso</span>';
+        }
+    }
+
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const texto = chatInput.value.trim();
+        if (!texto) return;
+
+        addMessage('Tú', texto);
+        chatInput.value = '';
+        chatInput.disabled = true; 
+
+        try {
+            const res = await fetch(procesarMensajeURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                body: JSON.stringify({ mensaje: texto })
+            });
+            
+            const data = await res.json();
+            
+            addMessage('NutriBot', data.respuesta_bot);
+            
+            if (data.status === 'reset') actualizarTabla(null);
+            else if (data.datos_cita) actualizarTabla(data.datos_cita);
+
+            if (data.status === 'finalizado') {
+                chatInput.placeholder = "¡Cita Confirmada! Gracias.";
+                chatForm.querySelector('button').classList.replace('btn-dark', 'btn-success');
+                chatForm.querySelector('button').textContent = "Listo";
+
+                setTimeout(function() {
+                    window.location.href = '/citas/mis-citas';
+                }, 1000);
+            } else {
+                chatInput.disabled = false;
+                chatInput.focus();
+            }
+            
+        } catch (err) {
+            console.error(err);
+            addMessage('Sistema', 'Error de conexión.');
+            chatInput.disabled = false;
+        }
+    });
+</script>
+{% endblock %}
