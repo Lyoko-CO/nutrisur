@@ -5,11 +5,11 @@ from .models import Cita
 
 @admin.register(Cita)
 class CitaAdmin(admin.ModelAdmin):
-    list_display= ('usuario', 'tipo', 'fecha', 'estado')
-    list_filter = ('estado', 'tipo', 'fecha')
-    search_fields = ('usuario__email', 'usuario__nombre', 'tipo')
+    list_display= ('usuario', 'fecha', 'estado', 'observaciones')
+    list_filter = ('estado', 'fecha')
+    search_fields = ('usuario__email', 'usuario__nombre')
     
     fieldsets = (
-        (None, {'fields': ('usuario', 'tipo')}),
+        (None, {'fields': ('usuario', 'observaciones')}),
         ('Horario y Estado', {'fields': ('fecha', 'estado')}),
     )
