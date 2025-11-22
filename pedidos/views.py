@@ -50,10 +50,18 @@ def chatbot_view(request):
         estado = 'B'
     )
 
-    productos_escaparate = Producto.objects.all()[:12]
+    productos_recientes_ids = request.user.historial_productos
+    productos_recientes = []
+    if productos_recientes_ids:
+        recientes_db = Producto.objects.filter(id__in=productos_recientes_ids)
+        # Mantener el orden según historial
+        productos_recientes = sorted(recientes_db, key=lambda p: productos_recientes_ids.index(p.id))
+
+    productos_escaparate = Producto.objects.exclude(id__in=productos_recientes_ids)[:25]
     
     context = {
         'pedido': pedido,
+        'historial': productos_recientes,
         'productos_escaparate': productos_escaparate
     }
     
@@ -142,6 +150,11 @@ def procesar_mensaje_view(request):
             if pedido.pedidoproducto_set.exists():
                 pedido.estado = 'P' # Pasamos a Pendiente
                 pedido.save()
+
+                #Actualizar historial del usuario
+                ids_pedidos = [p.producto.id for p in pedido.pedidoproducto_set.all()]
+                request.user.registrar_compra(ids_pedidos)
+
                 status_respuesta = 'finalizado'
                 texto_bot = "¡Pedido confirmado! Gracias por tu compra en NutriSur."
             else:
