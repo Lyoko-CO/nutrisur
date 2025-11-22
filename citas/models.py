@@ -10,10 +10,10 @@ class Cita(models.Model):
         on_delete=models.CASCADE,
         related_name='citas')
     
-    fecha = models.DateTimeField()
-    tipo  = models.CharField(max_length=100)
+    fecha = models.DateTimeField(null=True, blank=True)
     
     ESTADOS = [
+        ('BORRADOR', 'Borrador'),
         ('PENDIENTE', 'Pendiente'),
         ('CONFIRMADA', 'Confirmada'),
         ('CANCELADA', 'Cancelada'),
@@ -22,8 +22,10 @@ class Cita(models.Model):
     estado = models.CharField(
         max_length=10, 
         choices = ESTADOS,
-        default = 'PENDIENTE'
+        default = 'BORRADOR'
     )
+
+    observaciones = models.TextField(blank=True, null=True)
     
     @property
     def cliente_nombre(self):
@@ -39,8 +41,3 @@ class Cita(models.Model):
     
     def __str__(self):
         return super().__str__()
-    
-    
-    
-    
-    

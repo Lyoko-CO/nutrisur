@@ -32,6 +32,7 @@ urlpatterns = [
     path('pedidos/', include('pedidos.urls')),
     path('usuarios/', include('usuarios.urls')),
     path('api/actualizar-cantidad/', pedidos_views.actualizar_cantidad_view, name="actualizar_cantidad"),
+    path('citas/', include('citas.urls')),
 ]
 
 if settings.DEBUG:
