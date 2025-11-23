@@ -15,3 +15,6 @@ __pycache__/
 # Configuración de IDE
 .idea/
 .vscode/
+
+#Seguridad
+.env
