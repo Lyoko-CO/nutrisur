@@ -21,7 +21,6 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 
 from . import views
-from usuarios import views as usuarios_views
 from pedidos import views as pedidos_views
 
 
@@ -31,7 +30,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('pedidos/', include('pedidos.urls')),
     path('usuarios/', include('usuarios.urls')),
-    path('api/actualizar-cantidad/', pedidos_views.actualizar_cantidad_view, name="actualizar_cantidad"),
     path('citas/', include('citas.urls')),
 ]
 
