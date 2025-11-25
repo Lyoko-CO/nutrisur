@@ -53,7 +53,7 @@ Sigue estos pasos para levantar el proyecto en tu entorno local en Windows:
     python manage.py runserver
     ```
 
-7.  **Abre la aplicación:**
+7.  **Abre la aplicación:**  
     Visita `http://127.0.0.1:8000` en tu navegador.
 
 
