@@ -211,13 +211,15 @@
             else if (data.datos_cita) actualizarTabla(data.datos_cita);
 
             if (data.status === 'finalizado') {
-                chatInput.placeholder = "¡Cita Confirmada! Gracias.";
-                chatForm.querySelector('button').classList.replace('btn-dark', 'btn-success');
-                chatForm.querySelector('button').textContent = "Listo";
-
-                setTimeout(function() {
+                chatInput.placeholder = "¡Cita Confirmada! Pulsa Listo para salir.";
+                const btn = chatForm.querySelector('button');
+                btn.classList.replace('btn-dark', 'btn-success');
+                btn.textContent = "Listo";
+                btn.type = "button"
+                btn.onclick = function() {
                     window.location.href = '/citas/mis-citas';
-                }, 1000);
+                };
+                btn.disabled = false;
             } else {
                 chatInput.disabled = false;
                 chatInput.focus();

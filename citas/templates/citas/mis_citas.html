@@ -4,47 +4,70 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-lg-10 offset-lg-1">
+    <div class="col-lg-8 offset-lg-2">
         
-        <h2 class="mb-4">
-            Mis Citas de Masajes
-            
-        </h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Mis Citas</h2>
+            <a href="{% url 'nueva_cita' %}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Nueva Reserva
+            </a>
+        </div>
 
         {% if citas %}
-            
-            <ul class="list-group">
+            <div class="list-group">
                 {% for cita in citas %}
-                <li class="list-group-item d-flex justify-content-between align-items-center mb-2 shadow-sm p-3">
+                <div class="list-group-item list-group-item-action flex-column align-items-start p-4 mb-3 shadow-sm border rounded-3">
                     
-                    <div class="d-flex flex-column">
-                        <span class="fw-bold fs-5">
-                            Tipo: {{ cita.tipo }}
-                        </span>
-                        <span class="text-muted small">
-                            Fecha y Hora: {{ cita.fecha|date:"d/m/Y H:i" }}
-                        </span>
-                    </div>
-
-                    <div class="text-end">
-                        {% if cita.estado == 'CONFIRMADA' %}
-                            <span class="badge bg-success fs-6">{{ cita.get_estado_display }}</span>
-                        {% elif cita.estado == 'CANCELADA' %}
-                            <span class="badge bg-danger fs-6">{{ cita.get_estado_display }}</span>
-                        {% else %}
-                            <span class="badge bg-warning text-dark fs-6">{{ cita.get_estado_display }}</span>
-                        {% endif %}
+                    <div class="d-flex w-100 justify-content-between align-items-start">
                         
-                        {# Aquí podrías añadir un botón para cancelar o editar, si lo necesitas en el futuro #}
-                    </div>
+                        <div>
+                            <h3 class="mb-1 text-primary fw-bold display-6" style="font-size: 1.75rem;">
+                                {{ cita.fecha|date:"l, d \d\e F"|capfirst }}
+                            </h3>
+                            <p class="fs-4 text-dark mb-2">
+                                <i class="bi bi-clock"></i> {{ cita.fecha|date:"H:i" }}
+                            </p>
+                        </div>
 
-                </li>
+                        <div>
+                            {% if cita.estado == 'CONFIRMADA' %}
+                                <span class="badge bg-success rounded-pill fs-6">Confirmada</span>
+                            {% elif cita.estado == 'PENDIENTE' %}
+                                <span class="badge bg-warning text-dark rounded-pill fs-6">Pendiente</span>
+                            {% elif cita.estado == 'CANCELADA' %}
+                                <span class="badge bg-danger rounded-pill fs-6">Cancelada</span>
+                            {% else %}
+                                <span class="badge bg-secondary rounded-pill fs-6">{{ cita.get_estado_display }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <hr class="my-3">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p class="mb-1 text-muted">
+                            <strong class="text-dark">Observaciones:</strong><br> 
+                            {{ cita.observaciones|default:"<em>Sin observaciones adicionales.</em>" }}
+                        </p>
+                        
+                        {% if cita.estado == 'PENDIENTE' or cita.estado == 'CONFIRMADA' %}
+                        <div class="btn-group">
+                            <a href="{% url 'modificar_cita' cita.id %}" class="btn btn-outline-primary btn-sm">Modificar</a>
+                            <a href="{% url 'cancelar_cita' cita.id %}" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Seguro que quieres cancelar esta cita?')">Cancelar</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                </div>
                 {% endfor %}
-            </ul>
+            </div>
 
         {% else %}
-            <div class="alert alert-info text-center" role="alert">
-                Aún no tienes ninguna cita de masaje reservada.
+            <div class="text-center py-5">
+                <div class="mb-3" style="font-size: 3rem;">📅</div>
+                <h4 class="text-muted">No tienes citas programadas</h4>
+                <p class="mb-4">Usa nuestro asistente virtual para reservar tu próximo masaje.</p>
+                <a href="{% url 'nueva_cita' %}" class="btn btn-success btn-lg">Reservar ahora</a>
             </div>
         {% endif %}
 
