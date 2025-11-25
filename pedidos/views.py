@@ -30,6 +30,13 @@ def lista_pedidos_view(request):
 @login_required
 def chatbot_view(request):
     
+    # --- INICIO DEL CAMBIO DE SEGURIDAD ---
+    if not request.user.is_vip:
+        # Si no es VIP, guardamos un mensaje de error
+        messages.error(request, "El acceso al Chatbot está reservado para clientes VIP. Para convertirte en cliente VIP, por favor ponte en contacto con Fernando")
+        # Y lo redirigimos a la página de opciones de compra (o donde prefieras)
+        return redirect('opciones_compra') 
+    
     pedido = Pedido.objects.get_or_create(
         usuario = request.user,
         estado = 'B'

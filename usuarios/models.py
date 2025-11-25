@@ -44,6 +44,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     historial_productos = models.JSONField(default=list, blank=True)
     
+    is_vip = models.BooleanField(default=False, verbose_name="Cliente Habitual")
+    
     objects = CustomUserManager()
     
     USERNAME_FIELD= 'email'
