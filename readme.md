@@ -13,7 +13,7 @@ La aplicación fue desarrollada utilizando el *framework full-stack* Django, uti
 
 ## 📋 Prerrequisitos
 
-Antes de lanzar la aplicación de manera local, asegúrate de tener instalado [Python](https://www.python.org/downloads/release/python-31212/) (versión 3.12): 
+Antes de lanzar la aplicación de manera local, asegúrate de tener instalado [Python](https://www.python.org/downloads/release/python-31212/) (versión 3.12).
 
 ## 🚀 Instalación y configuración
 
