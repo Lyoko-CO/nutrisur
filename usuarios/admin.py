@@ -3,12 +3,25 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from .models import CustomUser
 
+@admin.action(description='Marcar como Cliente VIP')
+def hacer_vip(modeladmin, request, queryset):
+    updated = queryset.update(is_vip=True)
+    modeladmin.message_user(request, f"{updated} usuarios marcados como VIP exitosamente.")
+
+@admin.action(description='Quitar estado de Cliente VIP')
+def quitar_vip(modeladmin, request, queryset):
+    updated = queryset.update(is_vip=False)
+    modeladmin.message_user(request, f"{updated} usuarios desmarcados como VIP exitosamente.")
+
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     list_display = ('email', 'nombre', 'telefono', 'is_staff', 'is_active', 'is_superuser', 'is_vip')
-    list_filter = ('is_staff', 'is_active', 'is_superuser')
+    list_editable= ('is_vip',)
+    list_filter = ('is_staff', 'is_active', 'is_superuser', 'is_vip')
     search_fields = ('email', 'nombre', 'telefono')
     ordering = ('email',)
+
+    actions = [hacer_vip, quitar_vip]
 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
