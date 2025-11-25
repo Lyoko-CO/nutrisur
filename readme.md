@@ -46,6 +46,7 @@ Sigue estos pasos para levantar el proyecto en tu entorno local en Windows:
     ```env
     GEMINI_API_KEY=<api_secreta_de_gemini>
     ```
+    Nota: debes utilizar tu propia API de Gemini para utilizar el chatbot.
 
 6.  **Inicia el servidor de desarrollo.**
     ```bash
