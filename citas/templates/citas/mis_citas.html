@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Citas - NutriSur{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 offset-lg-1">
+        
+        <h2 class="mb-4">
+            Mis Citas de Masajes
+            
+        </h2>
+
+        {% if citas %}
+            
+            <ul class="list-group">
+                {% for cita in citas %}
+                <li class="list-group-item d-flex justify-content-between align-items-center mb-2 shadow-sm p-3">
+                    
+                    <div class="d-flex flex-column">
+                        <span class="fw-bold fs-5">
+                            Tipo: {{ cita.tipo }}
+                        </span>
+                        <span class="text-muted small">
+                            Fecha y Hora: {{ cita.fecha|date:"d/m/Y H:i" }}
+                        </span>
+                    </div>
+
+                    <div class="text-end">
+                        {% if cita.estado == 'CONFIRMADA' %}
+                            <span class="badge bg-success fs-6">{{ cita.get_estado_display }}</span>
+                        {% elif cita.estado == 'CANCELADA' %}
+                            <span class="badge bg-danger fs-6">{{ cita.get_estado_display }}</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark fs-6">{{ cita.get_estado_display }}</span>
+                        {% endif %}
+                        
+                        {# Aquí podrías añadir un botón para cancelar o editar, si lo necesitas en el futuro #}
+                    </div>
+
+                </li>
+                {% endfor %}
+            </ul>
+
+        {% else %}
+            <div class="alert alert-info text-center" role="alert">
+                Aún no tienes ninguna cita de masaje reservada.
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

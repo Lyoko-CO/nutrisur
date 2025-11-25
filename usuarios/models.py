@@ -41,6 +41,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)   
     is_active = models.BooleanField(default=True)   
     fecha_ingreso = models.DateTimeField(default=timezone.now)
+
+    historial_productos = models.JSONField(default=list, blank=True)
+    
     is_vip = models.BooleanField(default=False, verbose_name="Cliente Habitual")
     
     objects = CustomUserManager()
@@ -53,4 +56,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'Usuarios'     
         
     def __str__(self):
-        return f"{self.nombre}, ({self.email})"   
+        return f"{self.nombre}, ({self.email})"
+    
+    def registrar_compra(self, nuevos_ids):
+        '''
+        Actualiza el historial de productos comprados por el usuario (máx. 6).
+        '''
+        historial = self.historial_productos
+        for id_prod in nuevos_ids:
+            if id_prod in historial:
+                historial.remove(id_prod)
+        
+        historial = nuevos_ids + historial
+
+        self.historial_productos = historial[:6]
+        self.save()
