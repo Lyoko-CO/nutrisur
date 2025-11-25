@@ -16,6 +16,8 @@ from django.contrib.messages import constants as messages
 
 from dotenv import load_dotenv
 
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -194,3 +196,4 @@ MESSAGE_TAGS = {
     messages.WARNING: 'warning',
     messages.ERROR: 'danger',  # <--- Esta es la clave: convertimos 'error' en 'danger'
 }
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
