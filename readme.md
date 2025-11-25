@@ -5,7 +5,7 @@
 
 **Nutrisur** es una aplicación web diseñada para aunar dos líneas de negocio relacionadas con la salud: la compra de productos alimenticios y la gestión de citas de servicios como masajes o asesoramiento nutricional.
 
-🔗 **Aplicación desplegada:** [https://tu-proyecto.com](https://tu-proyecto.com)
+🔗 **Aplicación desplegada:** [Nutrisur](https://nutrisur.onrender.com)
 
 ## 🛠️ Tecnologías Usadas
 
