@@ -122,10 +122,11 @@
                 <div class="card-footer bg-white py-3">
                     <form id="chat-form">
                         <div class="input-group input-group-lg">
-                            <input type="text" id="chat-input" class="form-control" 
-                                   placeholder="Escribe aquí (ej: 'El martes por la tarde')..." 
-                                   autocomplete="off" required>
-                            <button type="submit" class="btn btn-dark px-4">Enviar</button>
+                            <input type="text" id="chat-input" class="form-control" placeholder="Escribe o habla..." required>
+                            <button type="button" id="btn-micro" class="btn btn-outline-secondary" title="Hablar">
+                                <span id="micro-icon">🎙️</span>
+                            </button>
+                            <button type="submit" class="btn btn-primary px-4">Enviar</button>
                         </div>
                     </form>
                 </div>
@@ -211,13 +212,15 @@
             else if (data.datos_cita) actualizarTabla(data.datos_cita);
 
             if (data.status === 'finalizado') {
-                chatInput.placeholder = "¡Cita Confirmada! Gracias.";
-                chatForm.querySelector('button').classList.replace('btn-dark', 'btn-success');
-                chatForm.querySelector('button').textContent = "Listo";
-
-                setTimeout(function() {
+                chatInput.placeholder = "¡Cita Confirmada! Pulsa Listo para salir.";
+                const btn = chatForm.querySelector('button');
+                btn.classList.replace('btn-dark', 'btn-success');
+                btn.textContent = "Listo";
+                btn.type = "button"
+                btn.onclick = function() {
                     window.location.href = '/citas/mis-citas';
-                }, 1000);
+                };
+                btn.disabled = false;
             } else {
                 chatInput.disabled = false;
                 chatInput.focus();
@@ -229,5 +232,67 @@
             chatInput.disabled = false;
         }
     });
+
+    const btnMicro = document.getElementById('btn-micro');
+    const microIcon = document.getElementById('micro-icon');
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+
+        recognition.lang = 'es-ES'; // Idioma español
+        recognition.continuous = false; // Para de escuchar al terminar la frase
+        recognition.interimResults = false; // Solo resultados finales
+
+        // Al pulsar el micro
+        btnMicro.addEventListener('click', () => {
+            if (btnMicro.classList.contains('recording')) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        });
+
+        // Cuando empieza a escuchar
+        recognition.onstart = () => {
+            btnMicro.classList.add('recording');
+            btnMicro.classList.replace('btn-outline-secondary', 'btn-danger'); // Se pone rojo
+            microIcon.textContent = '⏹️'; // Icono de stop
+            chatInput.placeholder = "Te escucho...";
+        };
+
+        // Cuando termina (por silencio o stop manual)
+        recognition.onend = () => {
+            btnMicro.classList.remove('recording');
+            btnMicro.classList.replace('btn-danger', 'btn-outline-secondary'); // Vuelve a gris
+            microIcon.textContent = '🎙️';
+            chatInput.placeholder = "Escribe tu mensaje...";
+            chatInput.focus();
+        };
+
+        // Cuando recibe el texto
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            chatInput.value = transcript; // Escribe lo que has dicho
+            
+            // Opcional: Enviar automáticamente tras hablar
+            // setTimeout(() => chatForm.dispatchEvent(new Event('submit')), 500);
+        };
+
+        // Manejo de errores
+        recognition.onerror = (event) => {
+            console.error("Error de voz:", event.error);
+            btnMicro.classList.remove('recording');
+            // Restaurar estilo si falla
+            btnMicro.classList.replace('btn-danger', 'btn-outline-secondary');
+            microIcon.textContent = '🎙️';
+        };
+
+    } else {
+        // Si el navegador es muy antiguo
+        btnMicro.style.display = 'none';
+        console.log("Tu navegador no soporta reconocimiento de voz.");
+    }
 </script>
 {% endblock %}

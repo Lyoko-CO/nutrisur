@@ -1,99 +1,72 @@
-/* --- ESTRUCTURA PRINCIPAL --- */
+/* --- VENTANA DE CHAT --- */
 #chat-window {
-    /* Altura base para móviles (un poco más alta que antes) */
-    height: 500px; 
-    
+    height: 450px;
     overflow-y: auto;
     background-color: #ffffff;
     border: 1px solid #f0f0f0;
     border-radius: 8px;
     padding: 20px;
-    
-    /* Scroll suave */
-    scroll-behavior: smooth;
-    
     scrollbar-width: thin;
     scrollbar-color: #ced4da #f9f9f9;
 }
 
-body {
-    background-color: #f5f7fa; /* Un fondo gris muy suave para dar profundidad */
-}
-
-.chat-container {
-    max-width: 900px; /* Centrado y contenido, ideal para lectura */
-    margin: 0 auto;
-}
-
-/* --- VENTANA DE CHAT --- */
-#chat-window {
-    height: 450px;
-    overflow-y: auto;
-    background-color: #ffffff; /* Fondo blanco limpio como en NutriBot */
-    border: 1px solid #f0f0f0;
-    border-radius: 8px; /* Mismo radio que las cards de NutriBot */
-    padding: 20px;
-    scrollbar-width: thin;
-    scrollbar-color: #ced4da #f9f9f9;
-}
-
-/* Scrollbar personalizada webkit (Chrome/Safari) para armonía */
-#chat-window::-webkit-scrollbar {
-    width: 8px;
-}
-#chat-window::-webkit-scrollbar-track {
-    background: #f9f9f9;
-}
-#chat-window::-webkit-scrollbar-thumb {
-    background-color: #ced4da;
-    border-radius: 4px;
-}
-
-/* --- MENSAJES (BURBUJAS) --- */
+/* --- MENSAJES --- */
 .chat-message {
     padding: 15px 18px;
     border-radius: 15px;
     margin-bottom: 20px;
-    font-size: 1.15rem; /* Letra grande y legible para mayores */
+    font-size: 1.15rem; 
     line-height: 1.6;
     position: relative;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra sutil estilo NutriBot */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     max-width: 85%;
     animation: fadeIn 0.3s ease-in-out;
 }
 
-
-/* --- FORMULARIO DE ENTRADA --- */
-.input-group-lg > .form-control {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-    border-color: #ced4da;
-    font-size: 1.1rem;
-}
-.input-group-lg > .btn {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
+.chat-message.bot {
+    background-color: #f9f9f9;
+    color: #333;
+    border-bottom-left-radius: 2px;
+    margin-right: auto;
 }
 
-/* --- TABLA DE RESUMEN --- */
-.table-resumen {
-    background-color: white;
-}
-.badge-estado {
-    font-size: 0.9rem;
-    padding: 8px 12px;
-    letter-spacing: 0.5px;
+.chat-message.user {
+    background-color: #e8f5e9; /* Verde muy suave */
+    color: #1b5e20;
+    border-bottom-right-radius: 2px;
+    margin-left: auto;
+    text-align: right;
 }
 
-/* Animación de entrada */
+/* Iconos en el panel lateral */
+.icon-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.recording {
+    animation: pulse-red 1.5s infinite;
+}
+
+@keyframes pulse-red {
+    0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+}
+
+/* Ajuste visual para el icono dentro del botón */
+#micro-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+/* Animación */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-/* --- RESPONSIVE --- */
-@media (min-width: 992px) {
-    #chat-window {
-        height: 500px; /* Más alto en escritorio */
-    }
 }

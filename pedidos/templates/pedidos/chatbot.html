@@ -69,9 +69,12 @@
             </div>
 
             <form id="chat-form">
-                <div class="input-group input-group-lg">
-                    <input type="text" id="chat-input" class="form-control" placeholder="Ej: Quiero proteína de suero..." required>
-                    <button type="submit" class="btn btn-primary px-4">Enviar</button>
+                <div class="input-group">
+                    <input type="text" id="chat-input" class="form-control" placeholder="Escribe o dicta tu pedido..." required>
+                    <button type="button" id="btn-micro" class="btn btn-outline-secondary" title="Dictar pedido">
+                        <span id="micro-icon">🎙️</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
                 </div>
             </form>
         </div>
@@ -354,6 +357,61 @@
             };
         });
     });
+    const btnMicro = document.getElementById('btn-micro');
+    const microIcon = document.getElementById('micro-icon');
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+
+        recognition.lang = 'es-ES'; // Español
+        recognition.continuous = false; // Detener al dejar de hablar
+        recognition.interimResults = false; // Solo resultados finales
+
+        // Evento click del micrófono
+        btnMicro.addEventListener('click', () => {
+            if (btnMicro.classList.contains('recording')) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        });
+
+        // Al empezar a grabar
+        recognition.onstart = () => {
+            btnMicro.classList.add('recording');
+            btnMicro.classList.replace('btn-outline-secondary', 'btn-danger'); // Cambia a rojo
+            microIcon.textContent = '⏹️';
+            chatInput.placeholder = "Te escucho...";
+        };
+
+        // Al terminar de grabar
+        recognition.onend = () => {
+            btnMicro.classList.remove('recording');
+            btnMicro.classList.replace('btn-danger', 'btn-outline-secondary'); // Vuelve a gris
+            microIcon.textContent = '🎙️';
+            chatInput.placeholder = "Escribe tu mensaje...";
+            chatInput.focus();
+        };
+
+        // Al recibir el texto
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            chatInput.value = transcript;
+            
+            // Opcional: Enviar automáticamente tras una pequeña pausa
+            // setTimeout(() => chatForm.dispatchEvent(new Event('submit')), 500);
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Error de voz:", event.error);
+            recognition.stop();
+        };
+
+    } else {
+        // Ocultar botón si el navegador no es compatible
+        btnMicro.style.display = 'none';
+    }
 
 </script>
 {% endblock %}
