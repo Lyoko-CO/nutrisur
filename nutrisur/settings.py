@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+from django.contrib.messages import constants as messages
+
+from dotenv import load_dotenv
 
 from dotenv import load_dotenv
 
@@ -40,6 +43,7 @@ INSTALLED_APPS = [
     'productos',
     'pedidos',
     'citas',
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -124,7 +128,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
@@ -150,4 +154,53 @@ LOGOUT_REDIRECT_URL = 'home'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+
+# --- CONFIGURACIÓN DE JAZZMIN (NutriSur) ---
+
+JAZZMIN_SETTINGS = {
+    # Títulos y Marca
+    "site_title": "NutriSur Admin",
+    "site_header": "NutriSur",
+    "site_brand": "NutriSur",
+    "site_logo": "images/logo.png",  # Ver nota abajo sobre dónde poner la imagen
+    "login_logo": "images/logo.png",
+    
+    # Mensaje de bienvenida en el login
+    "welcome_sign": "Bienvenido al Panel de NutriSur",
+    
+    # Copyright al final de la página
+    "copyright": "NutriSur Ltd",
+    
+    # El modelo de usuario que usas (importante para que salga tu perfil arriba)
+    "user_avatar": None,
+
+    # Menú lateral
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "show_ui_builder": True,
+    "custom_css": "css/admin_custom.css",  # <--- Añade esta línea
+    
+    # Iconos para tus modelos (puedes buscar iconos de FontAwesome 5)
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "users.CustomUser": "fas fa-user-circle",
+    },
+}
+
+JAZZMIN_UI_TWEAKS = {
+    # El tema "Minty" es verde/fresco, perfecto para naturaleza.
+    # Otros opciones verdes: "flatly" (verde más serio) o "simplex".
+    "theme": "minty", 
+    "dark_mode_theme": None,
+}
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'secondary',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',  # <--- Esta es la clave: convertimos 'error' en 'danger'
+}
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')

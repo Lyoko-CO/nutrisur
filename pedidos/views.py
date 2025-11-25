@@ -1,29 +1,14 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import Pedido, PedidoProducto
 from productos.models import Producto
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from .gemini_utils import obtener_respuesta_gemini
+from .gemini_utils import obtener_respuesta_gemini, get_data_pedido
 import json
 
 # Create your views here.
-def get_data_pedido(pedido):
-    """Devuelve el estado actual del pedido en formato diccionario para JSON"""
-    items = []
-    for pp in pedido.pedidoproducto_set.all().select_related('producto'):
-        items.append({
-            'id_producto': pp.producto.id,
-            'nombre': pp.producto.nombre,
-            'precio_unitario': float(pp.producto.precio),
-            'cantidad': pp.cantidad,
-            'subtotal': float(pp.producto.precio * pp.cantidad)
-        })
-    
-    return {
-        'total_pedido': float(pedido.calcular_total()),
-        'items': items
-    }
 
 @login_required
 def lista_pedidos_view(request):
@@ -44,6 +29,13 @@ def lista_pedidos_view(request):
 
 @login_required
 def chatbot_view(request):
+    
+    # --- INICIO DEL CAMBIO DE SEGURIDAD ---
+    if not request.user.is_vip:
+        # Si no es VIP, guardamos un mensaje de error
+        messages.error(request, "El acceso al Chatbot está reservado para clientes VIP. Para convertirte en cliente VIP, por favor ponte en contacto con Fernando")
+        # Y lo redirigimos a la página de opciones de compra (o donde prefieras)
+        return redirect('opciones_compra') 
     
     pedido = Pedido.objects.get_or_create(
         usuario = request.user,
@@ -98,6 +90,47 @@ def actualizar_cantidad_view(request):
 
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    
+@login_required
+def cancelar_pedido_view(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id=pedido_id, usuario=request.user)
+    
+    # Solo permitimos cancelar si NO está Realizado
+    if pedido.estado != 'R':
+        pedido.estado = 'C' # Cancelado
+        pedido.save()
+        messages.success(request, f"El pedido #{pedido.id} ha sido cancelado.")
+    else:
+        messages.error(request, "No se puede cancelar un pedido que ya ha sido realizado.")
+        
+    return redirect('mis_pedidos')
+
+@login_required
+def modificar_pedido_view(request, pedido_id):
+    pedido_a_modificar = get_object_or_404(Pedido, id=pedido_id, usuario=request.user)
+    
+    if pedido_a_modificar.estado == 'R':
+        messages.error(request, "No se puede modificar un pedido ya realizado.")
+        return redirect('mis_pedidos')
+        
+    # 1. Buscamos si YA existe un borrador activo (el carrito actual)
+    borrador_actual = Pedido.objects.filter(usuario=request.user, estado='B').first()
+    
+    if borrador_actual:
+        # Si es el mismo pedido, no hacemos nada, solo redirigimos
+        if borrador_actual.id == pedido_a_modificar.id:
+            return redirect('chatbot_pedidos')
+            
+        # Si es OTRO pedido, lo "aparcamos" (lo pasamos a Pendiente) para no perderlo
+        borrador_actual.estado = 'P'
+        borrador_actual.save()
+    
+    # 2. Convertimos el pedido seleccionado en el nuevo Borrador Activo
+    pedido_a_modificar.estado = 'B'
+    pedido_a_modificar.save()
+    
+    messages.info(request, f"Estás editando el pedido #{pedido_a_modificar.id}.")
+    return redirect('chatbot_pedidos')
 
 @login_required
 @require_POST
@@ -113,7 +146,7 @@ def procesar_mensaje_view(request):
         pedido, _ = Pedido.objects.get_or_create(usuario=request.user, estado='B')
 
         # --- LLAMADA A GEMINI ---
-        respuesta_ai = obtener_respuesta_gemini(mensaje_usuario)
+        respuesta_ai = obtener_respuesta_gemini(mensaje_usuario, request)
         
         texto_bot = respuesta_ai.get("texto_respuesta", "No te he entendido bien.")
         acciones = respuesta_ai.get("acciones", [])
@@ -156,7 +189,7 @@ def procesar_mensaje_view(request):
                 request.user.registrar_compra(ids_pedidos)
 
                 status_respuesta = 'finalizado'
-                texto_bot = "¡Pedido confirmado! Gracias por tu compra en NutriSur."
+                texto_bot = "¡Pedido confirmado! Gracias por tu compra en NutriSur. Para recibir su pedido, haga bizum al 123456789 con su nombre completo en el concepto."
             else:
                 texto_bot = "No tienes productos en el carrito para confirmar."
 

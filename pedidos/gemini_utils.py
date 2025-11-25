@@ -1,9 +1,12 @@
 import google.generativeai as genai
 from django.conf import settings
+from pedidos.models import Pedido
 from productos.models import Producto
 import json
 
-def obtener_respuesta_gemini(mensaje_usuario):
+conversaciones = {}
+
+def obtener_respuesta_gemini(mensaje_usuario, request):
     """
     Procesa el mensaje del usuario usando Gemini y devuelve una respuesta estructurada.
     """
@@ -14,7 +17,14 @@ def obtener_respuesta_gemini(mensaje_usuario):
         productos = Producto.objects.all()
         catalogo_texto = "\n".join([f"- ID: {p.id}, Nombre: {p.nombre}, Precio: {p.precio}€" for p in productos])
 
-        # 2. Configurar el modelo y el prompt del sistema
+        # 2. Obtener o crear el historial del usuario
+        usuario_id = request.user.id
+        if usuario_id not in conversaciones:
+            conversaciones[usuario_id] = []
+        
+        historial = conversaciones[usuario_id]
+
+        # 3. Configurar el modelo y el prompt del sistema
         model = genai.GenerativeModel('gemini-2.5-flash')
         
         prompt_sistema = f"""
@@ -41,22 +51,53 @@ def obtener_respuesta_gemini(mensaje_usuario):
         
         REGLAS:
         1. Si el usuario quiere comprar algo, busca el nombre más parecido en el catálogo.
-        2. Si encuentras el producto, añade la acción "agregar_producto" al JSON.
-        3. Si el usuario no desea añadir mas productos al pedido, pon "finalizar_pedido": true.
-        4. Sé amable y breve.
+        2. Si encuentras el producto, añade la acción "agregar" al JSON.
+        3. Si el usuario quiere eliminar un producto, añade la acción "eliminar" al JSON.
+        4. Si el usuario quiere cancelar su pedido, elimina todos los productos del pedido.
+        5. Si el usuario no desea añadir mas productos al pedido, pon "finalizar_pedido": true.
+        6. Si el usuario quiere añadir o eliminar un producto pero no lo nombra, se refiere al último producto mencionado.
+        7. Si el usuario quiere añadir o eliminar un prodcuto pero el nombre no coincide con ningún producto del catálogo, se refiere al último producto mencionado en el historial con el nombre parecido.
+        8. Sé amable y breve.
+        9. Pide confirmación antes de finalizar el pedido.
+        10. Al finalizar el pedido, resume los productos añadidos y el total a pagar.
         """
 
-        # 3. Construir el historial para el contexto (simplificado)
-        chat_completo = prompt_sistema + "\n\n"
-        # Aquí podrías añadir mensajes anteriores si los guardaras en BD
+        # 4. Construir el historial para el contexto (simplificado)
+        chat_completo = prompt_sistema + "\n\n--- HISTORIAL DE CONVERSACIÓN ---\n"
         
+        for msg in historial:
+            if msg['remitente'] == 'usuario':
+                chat_completo += f"Cliente: {msg['contenido']}\n"
+            else:
+                chat_completo += f"NutriBot: {msg['contenido']}\n"
+        
+        # 5. Obtener estado actual del pedido
+        pedido = Pedido.objects.get(usuario=request.user, estado='B')
+        estado_pedido = get_data_pedido(pedido)
+        
+        chat_completo += f"\nEstado actual del pedido: {json.dumps(estado_pedido, ensure_ascii=False)}\n"
         chat_completo += f"Cliente: {mensaje_usuario}\nNutriBot (JSON):"
 
-        # 4. Generar respuesta
+        # 6. Generar respuesta
         response = model.generate_content(chat_completo)
         texto_limpio = response.text.replace('```json', '').replace('```', '').strip()
         
-        return json.loads(texto_limpio)
+        respuesta_json = json.loads(texto_limpio)
+        
+        # 7. Guardar en la variable historial
+        historial.append({
+            'remitente': 'usuario',
+            'contenido': mensaje_usuario
+        })
+        
+        historial.append({
+            'remitente': 'bot',
+            'contenido': respuesta_json.get('texto_respuesta', '')
+        })
+        
+        respuesta_json['historial'] = historial
+
+        return respuesta_json
 
     except Exception as e:
         print(f"Error Gemini: {e}")
@@ -66,3 +107,20 @@ def obtener_respuesta_gemini(mensaje_usuario):
             "acciones": [],
             "finalizar_pedido": False
         }
+    
+def get_data_pedido(pedido):
+    """Devuelve el estado actual del pedido en formato diccionario para JSON"""
+    items = []
+    for pp in pedido.pedidoproducto_set.all().select_related('producto'):
+        items.append({
+            'id_producto': pp.producto.id,
+            'nombre': pp.producto.nombre,
+            'precio_unitario': float(pp.producto.precio),
+            'cantidad': pp.cantidad,
+            'subtotal': float(pp.producto.precio * pp.cantidad)
+        })
+    
+    return {
+        'total_pedido': float(pedido.calcular_total()),
+        'items': items
+    }

@@ -7,6 +7,7 @@
     
     <title>{% block title %}NutriSur{% endblock %}</title>
     
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -14,9 +15,10 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">
-                <img src="{% static 'images/logo.png' %}" alt="Logo" style="max-height: 40px;">
+                <img src="{% static 'images/logo-nutrisur.png' %}" alt="Logo" style="max-height: 40px;">
                 NutriSur
             </a>
+
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -54,6 +56,12 @@
                                 </li>
                             </ul>
                         </li>
+
+                        {% if user.is_staff %}
+                        <a class="btn btn-outline-light btn-sm ms-2" href="{% url 'admin:index' %}">
+                            Panel de administrador
+                        </a>
+                        {% endif %}
 
                     {% else %}
                         <li class="nav-item">

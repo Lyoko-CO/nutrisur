@@ -1,0 +1,5 @@
+.user-panel .info {
+    white-space: normal !important; /* Permite salto de línea */
+    overflow: visible !important;   /* Muestra todo el contenido */
+    display: block !important;
+}
