@@ -128,7 +128,6 @@
 }
 
 
-
 /* --- ESTILOS PARA ESCRITORIO --- */
 @media (min-width: 992px) {
 
@@ -201,4 +200,26 @@
     .catalogo-header {
         margin-top: 20px;
     }
+}
+
+/* Animación del micrófono al grabar */
+.recording {
+    animation: pulse-red 1.5s infinite;
+}
+
+@keyframes pulse-red {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
+
+#micro-icon {
+    font-size: 1.2rem;
+    line-height: 1;
 }
