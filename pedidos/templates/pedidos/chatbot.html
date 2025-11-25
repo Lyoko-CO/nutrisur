@@ -190,45 +190,79 @@
     }
 
     chatForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const mensaje = chatInput.value.trim();
-        if (mensaje === "") return;
-
-        addMessage('Tú', mensaje);
-        chatInput.value = "";
-
-        try {
-            const response = await fetch(procesarMensajeURL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify({ mensaje: mensaje })
-            });
-
-            const data = await response.json();
+            e.preventDefault();
             
-            addMessage('NutriBot', data.respuesta_bot);
+            const mensaje = chatInput.value.trim();
+            if (mensaje === "") return;
 
-            if (data.total_pedido !== undefined) {
-                totalPedidoSpan.textContent = parseFloat(data.total_pedido).toFixed(2);
+            // 1. Mostrar el mensaje del usuario
+            addMessage('Tú', mensaje);
+            chatInput.value = "";
+            chatInput.disabled = true;
+            chatForm.querySelector('button').disabled = true;
+
+            // 2. Mostrar indicador de "escribiendo..."
+            let typingDiv;
+            setTimeout(() => {
+                typingDiv = document.createElement('div');
+                typingDiv.classList.add('chat-message', 'bot');
+                typingDiv.innerHTML = `<strong>NutriBot:</strong> <em>escribiendo...</em>`;
+                chatWindow.appendChild(typingDiv);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }, 300);
+
+
+            try {
+                // 3. Enviar el mensaje al backend
+                const response = await fetch(procesarMensajeURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ mensaje: mensaje })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+
+                const data = await response.json();
+                
+                // 4. Remover el indicador de "escribiendo..."
+                if (typingDiv) typingDiv.remove();
+                
+                // 5. Mostrar la respuesta del bot
+                addMessage('NutriBot', data.respuesta_bot);
+
+                // 6. Actualizar el total si existe
+                if (data.total_pedido !== undefined) {
+                    const totalNumerico = parseFloat(data.total_pedido);
+                    totalPedidoSpan.textContent = totalNumerico.toFixed(2);
+                }
+                
+                // 7. Actualizar items si existen
+                if (data.items) {
+                    renderizarDesglose(data.items);
+                }
+                
+                // 8. Si el pedido se finaliza, desactivar el input
+                if (data.status === 'finalizado') {
+                    chatInput.disabled = true;
+                    chatForm.querySelector('button').disabled = true;
+                } else {
+                    chatInput.disabled = false;
+                    chatForm.querySelector('button').disabled = false;
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                typingDiv.remove();
+                addMessage('NutriBot', 'Lo siento, ha ocurrido un error de conexión. Inténtalo de nuevo.');
+                chatInput.disabled = false;
+                chatForm.querySelector('button').disabled = false;
             }
-
-            if (data.items) {
-                renderizarDesglose(data.items);
-            }
-
-            if (data.status === 'finalizado') {
-                chatInput.disabled = true;
-                chatForm.querySelector('button').disabled = true;
-            }
-
-        } catch (error) {
-            console.error('Error:', error);
-            addMessage('NutriBot', 'Error de conexión.');
-        }
-    });
+        });
 
     // Función para añadir mensajes a la ventana
     function addMessage(sender, message) {

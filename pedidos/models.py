@@ -9,7 +9,8 @@ class Pedido(models.Model):
     ESTADOS =[
         ('B', 'Borrador'),
         ('P', 'Pendiente'),
-        ('R', 'Realizado')
+        ('R', 'Realizado'),
+        ('C', 'Cancelado')
     ]
     
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
