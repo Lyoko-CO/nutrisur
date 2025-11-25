@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from django.contrib.messages import constants as messages
 
 from dotenv import load_dotenv
 
@@ -184,4 +185,12 @@ JAZZMIN_UI_TWEAKS = {
     # Otros opciones verdes: "flatly" (verde más serio) o "simplex".
     "theme": "minty", 
     "dark_mode_theme": None,
+}
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'secondary',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',  # <--- Esta es la clave: convertimos 'error' en 'danger'
 }
