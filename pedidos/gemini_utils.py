@@ -1,6 +1,6 @@
 import google.generativeai as genai
 from django.conf import settings
-from pedidos.models import Pedido
+from pedidos.models import Pedido, ConfiguracionChatbot
 from productos.models import Producto
 import json
 
@@ -16,6 +16,14 @@ def obtener_respuesta_gemini(mensaje_usuario, request):
         # 1. Obtener el catálogo actual de la base de datos
         productos = Producto.objects.all()
         catalogo_texto = "\n".join([f"- ID: {p.id}, Nombre: {p.nombre}, Precio: {p.precio}€" for p in productos])
+
+        config_db = ConfiguracionChatbot.objects.first()
+        instrucciones_extra = ""
+        if config_db and config_db.activado:
+            instrucciones_extra = f"""
+            NOTAS DEL ADMINISTRADOR (Prioridad Alta):
+            {config_db.instrucciones_sistema}
+            """
 
         # 2. Obtener o crear el historial del usuario
         usuario_id = request.user.id
@@ -48,6 +56,8 @@ def obtener_respuesta_gemini(mensaje_usuario, request):
             ],
             "finalizar_pedido": false
         }}
+        
+        {instrucciones_extra}
         
         REGLAS:
         1. Si el usuario quiere comprar algo, busca el nombre más parecido en el catálogo.

@@ -315,9 +315,18 @@
             
             // 5. Si el pedido se finaliza, desactivar el input
             if (data.status === 'finalizado') {
-                chatInput.disabled = true;
-                chatForm.querySelector('button').disabled = true;
-            }
+                    chatInput.disabled = true;
+                    chatForm.querySelector('button').disabled = true;
+                    
+                    // Redirigir a "Mis Pedidos" después de 2 segundos
+                    setTimeout(function() {
+                        window.location.href = "{% url 'mis_pedidos' %}";
+                    }, 2000);
+                    
+                } else {
+                    chatInput.disabled = false;
+                    chatForm.querySelector('button').disabled = false;
+                }
 
         } catch (error) {
             console.error('Error:', error);

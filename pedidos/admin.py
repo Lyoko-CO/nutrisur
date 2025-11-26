@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Pedido, PedidoProducto
+from .models import Pedido, PedidoProducto, ConfiguracionChatbot
 
 class PedidoProductoInline(admin.TabularInline):
     model = PedidoProducto
@@ -39,3 +39,13 @@ class PedidoAdmin(admin.ModelAdmin):
 class PedidoProductoAdmin(admin.ModelAdmin):
     list_display = ('pedido', 'producto', 'cantidad')
     list_filter = ('pedido', 'producto')
+
+@admin.register(ConfiguracionChatbot)
+class ConfiguracionChatbotAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'activado')
+    # Limitamos para que no se creen infinitos, lo ideal es tener solo 1
+    def has_add_permission(self, request):
+        # Si ya existe 1, no dejar añadir más
+        if self.model.objects.count() >= 1:
+            return False
+        return super().has_add_permission(request)
