@@ -54,7 +54,7 @@ def chatbot_view(request):
         del request.session['cita_temporal']
     
     # Obtenemos la última cita real para mostrar algo en el panel (opcional)
-    cita_actual = Cita.objects.filter(usuario=request.user).last()
+    cita_actual = None
 
     mensaje_inicial = f"¡Hola {request.user.nombre}! Soy tu asistente de bienestar. ¿Cuándo te gustaría reservar tu próxima sesión?"
 
