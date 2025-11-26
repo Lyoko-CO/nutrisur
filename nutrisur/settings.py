@@ -181,6 +181,22 @@ JAZZMIN_SETTINGS = {
     "show_ui_builder": True,
     "custom_css": "css/admin_custom.css",  # <--- Añade esta línea
     
+    "topmenu_links": [
+        {"name": "Ver sitio Web",  "url": "home", "permissions": ["auth.view_user"]},
+        
+        # --- AÑADIR ESTE BLOQUE ---
+        {
+            "name": "Compartir App", 
+            "url": "https://wa.me/?text=Aquí%20tienes%20el%20enlace%20a%20NutriSur:%20https://nutrisur.onrender.com", 
+            "new_window": True,
+            "icon": "fab fa-whatsapp",  # Icono de WhatsApp
+            "permissions": ["auth.view_user"] # Solo visible para usuarios registrados
+        },
+        # --------------------------
+        
+        {"model": "auth.User"},
+    ],
+    
     # Iconos para tus modelos (puedes buscar iconos de FontAwesome 5)
     "icons": {
         "auth": "fas fa-users-cog",
