@@ -1,6 +1,7 @@
 import google.generativeai as genai
 from django.conf import settings
 from django.utils import timezone
+from citas.models import ConfiguracionChatbotCitas
 import json
 import os
 import locale
@@ -28,6 +29,14 @@ def consultar_gemini_citas(mensaje_usuario, datos_actuales, slots_ocupados):
         ahora = timezone.localtime(timezone.now())
         contexto_tiempo = f"Hoy es {ahora.strftime('%A, %d de %B de %Y')}. Hora actual: {ahora.strftime('%H:%M')}."
 
+        config_db = ConfiguracionChatbotCitas.objects.first()
+        instrucciones_extra = ""
+        if config_db:
+            instrucciones_extra = f"""
+            REGLAS ESPECIALES DEL CENTRO:
+            {config_db.instrucciones_adicionales}
+            """
+
         # 2. Prompt del Sistema (Las reglas del negocio)
         prompt = f"""
         Eres el recepcionista virtual de 'NutriSur' (Centro de bienestar).
@@ -42,6 +51,8 @@ def consultar_gemini_citas(mensaje_usuario, datos_actuales, slots_ocupados):
         ⚠️ AGENDA OCUPADA (NO RESERVAR EN ESTAS FECHAS/HORAS) ⚠️
         {slots_ocupados}
         --------------------------------------------------------
+
+        {instrucciones_extra}
 
         TU MISIÓN:
         1. Analizar el mensaje del usuario.

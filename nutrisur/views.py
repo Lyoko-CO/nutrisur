@@ -14,3 +14,6 @@ def opciones_compra_view(request):
     o la web oficial de Herbalife.
     """
     return render(request, 'opciones_compra.html')
+
+def sobre_mi_view(request):
+    return render(request, 'sobre_mi.html')
