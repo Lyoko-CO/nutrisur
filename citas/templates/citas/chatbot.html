@@ -123,10 +123,13 @@
                     <form id="chat-form">
                         <div class="input-group input-group-lg">
                             <input type="text" id="chat-input" class="form-control" placeholder="Escribe o habla..." required>
+                            <button type="button" id="btn-voz" class="btn btn-outline-secondary" title="Activar lectura en voz alta">
+                                🔇
+                            </button>
                             <button type="button" id="btn-micro" class="btn btn-outline-secondary" title="Hablar">
                                 <span id="micro-icon">🎙️</span>
                             </button>
-                            <button type="submit" class="btn btn-primary px-4">Enviar</button>
+                            <button type="submit" id="btn-enviar" class="btn btn-primary px-4">Enviar</button>
                         </div>
                     </form>
                 </div>
@@ -207,20 +210,21 @@
             const data = await res.json();
             
             addMessage('NutriBot', data.respuesta_bot);
+            leerTexto(data.respuesta_bot);
             
             if (data.status === 'reset') actualizarTabla(null);
             else if (data.datos_cita) actualizarTabla(data.datos_cita);
 
             if (data.status === 'finalizado') {
                 chatInput.placeholder = "¡Cita Confirmada! Pulsa Listo para salir.";
-                const btn = chatForm.querySelector('button');
-                btn.classList.replace('btn-dark', 'btn-success');
-                btn.textContent = "Listo";
-                btn.type = "button"
-                btn.onclick = function() {
+                const btnEnviar = document.getElementById('btn-enviar');
+                btnEnviar.classList.replace('btn-primary', 'btn-success'); 
+                btnEnviar.textContent = "Listo";
+                btnEnviar.type = "button";
+                btnEnviar.onclick = function() {
                     window.location.href = '/citas/mis-citas';
                 };
-                btn.disabled = false;
+                btnEnviar.disabled = false;
             } else {
                 chatInput.disabled = false;
                 chatInput.focus();
@@ -294,5 +298,69 @@
         btnMicro.style.display = 'none';
         console.log("Tu navegador no soporta reconocimiento de voz.");
     }
+
+
+    // LÓGICA PARA HACER QUE EL CHAT HABLE
+    let vozActivada = false;
+    const btnVoz = document.getElementById('btn-voz');
+    let vocesDisponibles = [];
+
+    function cargarVoces() {
+        vocesDisponibles = window.speechSynthesis.getVoices();
+    }
+
+    cargarVoces();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = cargarVoces;
+    }
+
+    btnVoz.addEventListener('click', () => {
+        vozActivada = !vozActivada;
+        
+        if (vozActivada) {
+            btnVoz.textContent = '🔊';
+            btnVoz.classList.replace('btn-outline-secondary', 'btn-info');
+            
+            leerTexto("Voz activada.");
+        } else {
+            btnVoz.textContent = '🔇';
+            btnVoz.classList.replace('btn-info', 'btn-outline-secondary');
+            window.speechSynthesis.cancel();
+        }
+    });
+
+    function leerTexto(textoHTML) {
+        if (!vozActivada) return;
+
+        window.speechSynthesis.cancel();
+
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = textoHTML;
+        const textoLimpio = tempDiv.textContent || tempDiv.innerText || "";
+
+        const utterance = new SpeechSynthesisUtterance(textoLimpio);
+
+        if (vocesDisponibles.length === 0) {
+            cargarVoces();
+        }
+
+        const vozEspanol = vocesDisponibles.find(voz => 
+            voz.lang.includes('es') && (voz.name.includes('Google') || voz.name.includes('Spanish'))
+        ) || vocesDisponibles.find(voz => voz.lang.includes('es'));
+
+        if (vozEspanol) {
+            utterance.voice = vozEspanol;
+            console.log("Usando voz:", vozEspanol.name);
+        } else {
+            console.warn("No se encontró voz específica en español, usando default.");
+            utterance.lang = 'es-ES';
+        }
+
+        utterance.rate = 0.9;
+        utterance.pitch = 1; 
+
+        window.speechSynthesis.speak(utterance);
+    }
+
 </script>
 {% endblock %}
