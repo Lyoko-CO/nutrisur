@@ -3,7 +3,7 @@
 ![Badge en Desarrollo](https://img.shields.io/badge/STATUS-EN%20DESARROLLO-green)  
 <img src="static\images\lyoko-logo.jpg" alt="Logo Lyoko" width="20%">  
 
-**Nutrisur** es una aplicación web diseñada para aunar dos líneas de negocio relacionadas con la salud: la compra de productos alimenticios y la gestión de citas de servicios como masajes o asesoramiento nutricional.
+**Nutrisur** es una aplicación web diseñada para [Fernando Escalona](https://www.instagram.com/fernandoescalona78/?hl=es), CEO de Natursur, con el objetivo aunar sus dos líneas de negocio relacionadas con la salud: la compra de productos alimenticios y la gestión de citas de servicios como masajes o asesoramiento nutricional.
 
 🔗 **Aplicación desplegada:** [Nutrisur](https://nutrisur.onrender.com)
 
