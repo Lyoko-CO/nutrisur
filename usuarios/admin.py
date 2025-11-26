@@ -3,6 +3,8 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html  # <--- IMPORTANTE: Importar esto
 from .models import CustomUser
+from pedidos.models import Pedido 
+
 
 @admin.action(description='Marcar como Cliente VIP')
 def hacer_vip(modeladmin, request, queryset):
@@ -13,6 +15,31 @@ def hacer_vip(modeladmin, request, queryset):
 def quitar_vip(modeladmin, request, queryset):
     updated = queryset.update(is_vip=False)
     modeladmin.message_user(request, f"{updated} usuarios desmarcados como VIP exitosamente.")
+
+
+# --- NUEVO: Definimos la tabla incrustada (Inline) ---
+class PedidoInline(admin.TabularInline):
+    model = Pedido
+    extra = 0  # No mostramos filas vacías para crear nuevos
+    
+    # Campos que queremos ver en la lista compacta
+    fields = ('link_pedido', 'fecha_pedido', 'estado', 'total_calculado')
+    readonly_fields = ('link_pedido', 'fecha_pedido', 'estado', 'total_calculado')
+    
+    can_delete = False # Por seguridad, mejor no borrar pedidos desde aquí
+    show_change_link = True # Añade un botón automático para editar
+
+    # Campo calculado para mostrar el total
+    def total_calculado(self, obj):
+        return f"{obj.calcular_total()} €"
+    total_calculado.short_description = "Total"
+
+    # Campo calculado para hacer clic e ir al pedido
+    def link_pedido(self, obj):
+        # Generamos un enlace HTML al pedido real
+        return format_html('<b style="color: #2c3e50;">Pedido #{}</b>', obj.id)
+    link_pedido.short_description = "ID Pedido"
+
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
@@ -37,6 +64,8 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('email', 'nombre', 'telefono', 'password1', 'password2', 'is_active', 'is_staff', 'is_superuser', 'is_vip'),
         }),
     )
+    
+    inlines = [PedidoInline]
     
     def status_vip(self, obj):
         if obj.is_vip:

@@ -35,7 +35,7 @@ def avisar_nueva_cita(sender, instance, created, **kwargs):
         ------------------------------------------
         
         Gestionar cita aquí:
-        http://127.0.0.1:8000/admin/citas/cita/{instance.id}/change/
+        https://nutrisur.onrender.com/admin/citas/cita/{instance.id}/change/
         """
         
         try:
