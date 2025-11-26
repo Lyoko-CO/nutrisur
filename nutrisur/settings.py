@@ -93,6 +93,11 @@ DATABASES = {
     )
 }
 
+if os.environ.get('DATABASE_URL'):
+    DATABASES['default']['OPTIONS'] = {
+        'options': '-c search_path=public'
+    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
