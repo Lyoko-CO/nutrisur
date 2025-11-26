@@ -42,5 +42,42 @@
         </div>
 
     </div>
+
+    <div class="row">
+        <div class="col-12">
+            <hr class="my-5 border-2 border-secondary opacity-10">
+        </div>
+    </div>
+
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8">
+            <a href="{% url 'sobre_mi' %}" class="text-decoration-none">
+                <div class="card border-0 bg-light hover-card text-center p-4">
+                    <div class="card-body">
+                        <div class="mb-3" style="font-size: 3rem;">👤</div>
+                        <h3 class="h3 card-title text-dark fw-bold">¿Quién es Fernando?</h3>
+                        <p class="card-text text-muted fs-5 mb-3">
+                            Conoce a la persona detrás de Natursur.
+                        </p>
+                        <span class="btn btn-outline-dark rounded-pill px-4">
+                            Leer
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <style>
+        .hover-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 1rem 3rem rgba(0,0,0,.1);
+            background-color: #fff !important; /* Se ilumina ligeramente al pasar el ratón */
+        }
+    </style>
     
 {% endblock %}
