@@ -5,7 +5,6 @@ from django.conf import settings
 from usuarios.models import CustomUser
 from pedidos.models import Pedido
 
-# ... (La señal de avisar_nuevo_usuario la dejas igual) ...
 @receiver(post_save, sender=CustomUser)
 def avisar_nuevo_usuario(sender, instance, created, **kwargs):
     if created: # Solo si es un usuario NUEVO (no si edita su perfil)
