@@ -93,7 +93,7 @@ DATABASES = {
     )
 }
 
-if os.environ.get('DATABASE_URL'):
+if 'DATABASE_URL' in os.environ:
     DATABASES['default']['OPTIONS'] = {
         'options': '-c search_path=public'
     }
