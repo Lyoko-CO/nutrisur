@@ -220,3 +220,12 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger',  # <--- Esta es la clave: convertimos 'error' en 'danger'
 }
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+
+# --- CONFIGURACIÓN DE CORREO (Gmail) ---
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'lyoko.nutrisur@gmail.com'  # <--- PON AQUÍ TU GMAIL
+EMAIL_HOST_PASSWORD = 'jmij sken wzfm xchr' # <--- AQUÍ TU CONTRASEÑA DE APLICACIÓN (No la normal)
+DEFAULT_FROM_EMAIL = 'NutriSur Admin <lyoko.nutrisur@gmail.com>'
