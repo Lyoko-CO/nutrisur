@@ -198,7 +198,13 @@
 
         addMessage('Tú', texto);
         chatInput.value = '';
-        chatInput.disabled = true; 
+        chatInput.disabled = true;
+
+        let typingDiv = document.createElement('div');
+        typingDiv.className = 'chat-message bot';
+        typingDiv.innerHTML = `<strong>NutriBot:</strong> <em>escribiendo...</em>`;
+        chatWindow.appendChild(typingDiv);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
 
         try {
             const res = await fetch(procesarMensajeURL, {
@@ -208,6 +214,8 @@
             });
             
             const data = await res.json();
+
+            if (typingDiv) typingDiv.remove();
             
             addMessage('NutriBot', data.respuesta_bot);
             leerTexto(data.respuesta_bot);
@@ -216,17 +224,20 @@
             else if (data.datos_cita) actualizarTabla(data.datos_cita);
 
             if (data.status === 'finalizado') {
-                // Indicamos visualmente que hemos terminado
-                chatInput.placeholder = "¡Cita Confirmada! Redirigiendo...";
+                chatInput.placeholder = "¡Cita confirmada! Pulsa Listo para salir.";
                 chatInput.disabled = true;
-                const btn = chatForm.querySelector('button');
-                btn.disabled = true;
-
-                // Redirigir a "Mis Citas" después de 2 segundos
-                setTimeout(function() {
-                    window.location.href = "{% url 'mis_citas' %}";
-                }, 2000);
-
+                const btnEnviar = document.getElementById('btn-enviar');
+                btnEnviar.classList.replace('btn-primary', 'btn-success'); 
+                btnEnviar.textContent = "Listo";
+                btnEnviar.type = "button";
+                btnEnviar.disabled = false;
+                btnEnviar.onclick = function() {
+                    window.location.href = '/citas/mis-citas';
+                };
+                const btnMicro = document.getElementById('btn-micro');
+                btnMicro.disabled = true;
+                const btnAltavoz = document.getElementById('btn-voz');
+                btnAltavoz.disabled = true;
             } else {
                 chatInput.disabled = false;
                 chatInput.focus();
@@ -234,6 +245,7 @@
             
         } catch (err) {
             console.error(err);
+            if (typingDiv) typingDiv.remove();
             addMessage('Sistema', 'Error de conexión.');
             chatInput.disabled = false;
         }

@@ -77,7 +77,7 @@
                     <button type="button" id="btn-micro" class="btn btn-outline-secondary" title="Dictar pedido">
                         <span id="micro-icon">🎙️</span>
                     </button>
-                    <button type="submit" class="btn btn-primary">Enviar</button>
+                    <button type="submit" id="btn-enviar" class="btn btn-primary">Enviar</button>
                 </div>
             </form>
         </div>
@@ -255,8 +255,20 @@
                 
                 // 8. Si el pedido se finaliza, desactivar el input
                 if (data.status === 'finalizado') {
+                    chatInput.placeholder = "¡Pedido confirmado! Pulsa Listo para salir.";
                     chatInput.disabled = true;
-                    chatForm.querySelector('button').disabled = true;
+                    const btnEnviar = document.getElementById('btn-enviar');
+                    btnEnviar.classList.replace('btn-primary', 'btn-success'); 
+                    btnEnviar.textContent = "Listo";
+                    btnEnviar.type = "button";
+                    btnEnviar.onclick = function() {
+                        window.location.href = '/pedidos/mis-pedidos';
+                    };
+                    btnEnviar.disabled = false;
+                    const btnMicro = document.getElementById('btn-micro');
+                    btnMicro.disabled = true;
+                    const btnAltavoz = document.getElementById('btn-voz');
+                    btnAltavoz.disabled = true;
                 } else {
                     chatInput.disabled = false;
                     chatForm.querySelector('button').disabled = false;
