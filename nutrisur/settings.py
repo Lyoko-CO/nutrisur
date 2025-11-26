@@ -93,11 +93,6 @@ DATABASES = {
     )
 }
 
-if 'DATABASE_URL' in os.environ:
-    DATABASES['default']['OPTIONS'] = {
-        'options': '-c search_path=nutrisurDB_motionstep'
-    }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
