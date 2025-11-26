@@ -95,7 +95,7 @@ DATABASES = {
 
 if 'DATABASE_URL' in os.environ:
     DATABASES['default']['OPTIONS'] = {
-        'options': '-c search_path=public'
+        'options': '-c search_path=nutrisurDB_motionstep'
     }
 
 
