@@ -41,3 +41,19 @@ class Cita(models.Model):
     
     def __str__(self):
         return super().__str__()
+    
+
+class ConfiguracionChatbotCitas(models.Model):
+    titulo = models.CharField(max_length=100, default="Configuración Citas")
+    instrucciones_adicionales = models.TextField(
+        help_text="Reglas extra para el recepcionista. Ej: 'Recuerda que los viernes cerramos a las 14:00 excepcionalmente'.",
+        default="",
+        blank=True
+    )
+
+    class Meta:
+        verbose_name = "Configuración del Chatbot (Citas)"
+        verbose_name_plural = "Configuración del Chatbot (Citas)"
+
+    def __str__(self):
+        return self.titulo

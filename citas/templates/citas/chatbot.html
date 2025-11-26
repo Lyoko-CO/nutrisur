@@ -212,15 +212,17 @@
             else if (data.datos_cita) actualizarTabla(data.datos_cita);
 
             if (data.status === 'finalizado') {
-                chatInput.placeholder = "¡Cita Confirmada! Pulsa Listo para salir.";
+                // Indicamos visualmente que hemos terminado
+                chatInput.placeholder = "¡Cita Confirmada! Redirigiendo...";
+                chatInput.disabled = true;
                 const btn = chatForm.querySelector('button');
-                btn.classList.replace('btn-dark', 'btn-success');
-                btn.textContent = "Listo";
-                btn.type = "button"
-                btn.onclick = function() {
-                    window.location.href = '/citas/mis-citas';
-                };
-                btn.disabled = false;
+                btn.disabled = true;
+
+                // Redirigir a "Mis Citas" después de 2 segundos
+                setTimeout(function() {
+                    window.location.href = "{% url 'mis_citas' %}";
+                }, 2000);
+
             } else {
                 chatInput.disabled = false;
                 chatInput.focus();
