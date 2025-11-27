@@ -11,9 +11,21 @@ class PedidoAdmin(admin.ModelAdmin):
     list_display = ('id', 'usuario', 'fecha_pedido', 'estado', 'calcular_total_display', 'is_vip_display')
     list_display_links = ('id', 'usuario')  # 👈 Esto hace que puedas pinchar en el pedido
     list_filter = ('estado', 'fecha_pedido', 'usuario__is_vip')
+    list_editable = ('estado',)
     search_fields = ('usuario__nombre', 'usuario__email')
     inlines = [PedidoProductoInline]
     actions = ['marcar_como_pendiente', 'marcar_como_realizado']  
+    
+    def formfield_for_choice_field(self, db_field, request, **kwargs):
+        
+        if db_field.name == "estado":
+            kwargs['choices'] = (
+                ('P', 'Pendiente'),
+                ('R', 'Realizado'),
+                ('C', 'Cancelado'),
+            )
+            
+        return super().formfield_for_choice_field(db_field, request, **kwargs)
     
 
     def calcular_total_display(self, obj):
