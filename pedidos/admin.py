@@ -35,7 +35,4 @@ class PedidoAdmin(admin.ModelAdmin):
     def marcar_como_realizado(self, request, queryset):
         queryset.update(estado='R')
 
-@admin.register(PedidoProducto)
-class PedidoProductoAdmin(admin.ModelAdmin):
-    list_display = ('pedido', 'producto', 'cantidad')
-    list_filter = ('pedido', 'producto')
+

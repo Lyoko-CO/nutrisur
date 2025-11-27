@@ -1,7 +1,8 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.conf import settings
+from django.utils import timezone 
 from .models import Cita
 
 @receiver(post_save, sender=Cita)
@@ -43,3 +44,47 @@ def avisar_nueva_cita(sender, instance, created, **kwargs):
             send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [settings.EMAIL_HOST_USER])
         except Exception as e:
             print(f"Error enviando correo cita: {e}")
+            
+            
+@receiver(pre_save, sender=Cita)
+def detectar_confirmacion_cita(sender, instance, **kwargs):
+    if instance.pk: # Solo si es una edición (la cita ya existía)
+        try:
+            cita_antigua = Cita.objects.get(pk=instance.pk)
+            # Si ANTES no estaba confirmada Y AHORA sí lo está
+            if cita_antigua.estado != 'CONFIRMADA' and instance.estado == 'CONFIRMADA':
+                instance._enviar_confirmacion = True # Ponemos la bandera
+        except Cita.DoesNotExist:
+            pass
+
+@receiver(post_save, sender=Cita)
+def enviar_email_confirmacion(sender, instance, **kwargs):
+    # Verificamos la bandera
+    if getattr(instance, '_enviar_confirmacion', False):
+        
+        fecha_str = "Fecha por definir"
+        if instance.fecha:
+            fecha_local = timezone.localtime(instance.fecha)
+            fecha_str = fecha_local.strftime("%d/%m/%Y a las %H:%M")
+
+        asunto = f"✅ Cita Confirmada: {fecha_str}"
+        mensaje = f"""
+        Hola {instance.cliente_nombre},
+        
+        Te confirmamos que tu cita ha sido aceptada por el administrador.
+        
+        DETALLES DE LA CITA:
+        📅 Fecha: {fecha_str}
+        📍 Lugar: Av. Santa Lucia 62, Alcalá de Guadaíra, Sevilla
+        
+        Por favor, intenta llegar 5 minutos antes.
+        Si necesitas cancelar, puedes hacerlo desde tu panel de usuario.
+        
+        ¡Te esperamos!
+        """
+        
+        try:
+            send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [instance.cliente_email])
+            print(f"Correo de cita confirmada enviado a {instance.cliente_email}")
+        except Exception as e:
+            print(f"Error enviando correo confirmación cita: {e}")

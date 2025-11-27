@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group 
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html  # <--- IMPORTANTE: Importar esto
@@ -16,6 +17,15 @@ def quitar_vip(modeladmin, request, queryset):
     updated = queryset.update(is_vip=False)
     modeladmin.message_user(request, f"{updated} usuarios desmarcados como VIP exitosamente.")
 
+@admin.action(description="Banear usuarios seleccionados")
+def banear_usuarios(modeladmin, request, queryset):
+    updated = queryset.update(is_active=False)
+    modeladmin.message_user(request, f"{updated} usuarios baneados exitosamente.")
+    
+@admin.action(description="Desbanear usuarios seleccionados")
+def desbanear_usuarios(modeladmin, request, queryset):
+    updated = queryset.update(is_active=True)
+    modeladmin.message_user(request, f"{updated} usuarios desbaneados exitosamente.")
 
 # --- NUEVO: Definimos la tabla incrustada (Inline) ---
 class PedidoInline(admin.TabularInline):
@@ -43,19 +53,23 @@ class PedidoInline(admin.TabularInline):
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('email', 'nombre', 'status_vip','telefono', 'is_staff', 'is_active', 'is_superuser', 'is_vip')
-    list_editable= ('is_vip',)
-    list_filter = ('is_staff', 'is_active', 'is_superuser', 'is_vip')
+    list_display = ('email', 'nombre', 'status_vip','telefono', 'is_active', 'is_vip')
+    list_editable= ('is_vip', 'is_active')
+    list_filter = ('is_active', 'is_vip')
     search_fields = ('email', 'nombre', 'telefono')
     ordering = ('email',)
 
-    actions = [hacer_vip, quitar_vip]
+    actions = [hacer_vip, banear_usuarios]
 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         (_('Información personal'), {'fields': ('nombre', 'telefono')}),
-        (_('Permisos'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_vip','groups', 'user_permissions')}),
+        (_('Estado del Cliente'), {'fields': ('is_active', 'is_vip',)}),
         (_('Fechas importantes'), {'fields': ('last_login', 'fecha_ingreso')}),
+        (_('Permisos Avanzados'), {
+            'classes': ('collapse',),  # <--- ESTA ES LA CLAVE: Hace que salga cerrado
+            'fields': ('is_staff', 'is_superuser'),
+        }),
     )
 
     add_fieldsets = (
@@ -82,4 +96,8 @@ class CustomUserAdmin(UserAdmin):
     status_vip.admin_order_field = 'is_vip'
 
     readonly_fields = ('fecha_ingreso', 'last_login')
+    
+    class Media:
+        js = ('js/admin_alert.js',)
 
+admin.site.unregister(Group)
