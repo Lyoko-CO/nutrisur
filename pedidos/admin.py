@@ -35,11 +35,6 @@ class PedidoAdmin(admin.ModelAdmin):
     def marcar_como_realizado(self, request, queryset):
         queryset.update(estado='R')
 
-@admin.register(PedidoProducto)
-class PedidoProductoAdmin(admin.ModelAdmin):
-    list_display = ('pedido', 'producto', 'cantidad')
-    list_filter = ('pedido', 'producto')
-
 @admin.register(ConfiguracionChatbot)
 class ConfiguracionChatbotAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'activado')
@@ -49,3 +44,4 @@ class ConfiguracionChatbotAdmin(admin.ModelAdmin):
         if self.model.objects.count() >= 1:
             return False
         return super().has_add_permission(request)
+
