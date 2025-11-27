@@ -74,4 +74,26 @@ class PedidoProducto(models.Model):
     def __str__(self):
         return f"{self.cantidad} x {self.producto.nombre} (Pedido #{self.pedido.id})"
 
+class ConfiguracionChatbot(models.Model):
+    titulo = models.CharField(max_length=100, default="Configuración Principal")
+    instrucciones_sistema = models.TextField(
+        help_text="Añade aquí reglas personalizadas para el prompt del sistema. Ejemplo: 'Si preguntan por envíos, di que son gratis a partir de 50€'.",
+        default="",
+        blank=True
+    )
+    activado = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Configuración del Chatbot (Pedidos)"
+        verbose_name_plural = "Configuración del Chatbot (Pedidos)"
+
+    def __str__(self):
+        return self.titulo
+    
+    def save(self, *args, **kwargs):
+        # Esto asegura que si creas uno nuevo, sea el único (Singleton simple)
+        if not self.pk and ConfiguracionChatbot.objects.exists():
+            # Si ya existe uno, no dejamos crear otro (o podrías borrar el anterior)
+            pass 
+        return super(ConfiguracionChatbot, self).save(*args, **kwargs)
     

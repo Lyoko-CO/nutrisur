@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sobre Mí - Fernando Escalona | NutriSur{% endblock %}
+
+{% block content %}
+<style>
+    /* Estilos personalizados para elevar el diseño visual */
+    .hero-section {
+        background: linear-gradient(135deg, #2c3e50 0%, #18bc9c 100%);
+        color: white;
+        padding: 80px 0;
+        border-radius: 0 0 50% 50% / 4%;
+        margin-bottom: 50px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-bg-pattern {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        opacity: 0.1;
+        background-image: radial-gradient(#fff 1px, transparent 1px);
+        background-size: 30px 30px;
+    }
+
+    .profile-img-container {
+        position: relative;
+        margin-top: -60px;
+        margin-bottom: 30px;
+        z-index: 10;
+    }
+
+    .profile-img {
+        width: 220px;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 8px solid white;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        transition: transform 0.3s ease;
+    }
+
+    .profile-img:hover {
+        transform: scale(1.05) rotate(-2deg);
+    }
+
+    .stat-card {
+        border: none;
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+    }
+
+    .ebook-card {
+        background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+        border: 1px solid #eee;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .ebook-card:hover {
+        border-color: #18bc9c;
+        box-shadow: 0 10px 20px rgba(24, 188, 156, 0.15);
+    }
+
+    .ebook-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #f39c12;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+    }
+
+    .social-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin: 0 10px;
+        transition: all 0.3s;
+        color: white;
+        text-decoration: none;
+    }
+
+    .social-btn:hover {
+        transform: scale(1.2);
+        color: white;
+        opacity: 0.9;
+    }
+
+    .bg-instagram { background: #E1306C; }
+    .bg-facebook { background: #1877F2; }
+    .bg-youtube { background: #FF0000; }
+
+    /* Timeline simple */
+    .timeline-step {
+        position: relative;
+        padding-left: 30px;
+        margin-bottom: 20px;
+        border-left: 3px solid #e9ecef;
+    }
+    .timeline-step:last-child { border-left-color: transparent; }
+    .timeline-step::before {
+        content: "";
+        position: absolute;
+        left: -9px;
+        top: 0;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #18bc9c;
+        border: 3px solid white;
+        box-shadow: 0 0 0 2px #18bc9c;
+    }
+</style>
+
+<div class="hero-section">
+    <div class="hero-bg-pattern"></div>
+    <div class="container position-relative z-1 text-center">
+        <h1 class="display-3 fw-bold mb-2">Fernando Escalona</h1>
+        <p class="lead fs-3 fw-light opacity-75">"Cuerpo, mente y alimentación: cuando los tres están en equilibrio, todo cambia."</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    
+    <div class="row justify-content-center text-center">
+        <div class="col-12 profile-img-container">
+            <img src="{% static 'images/fernando-escalona.png' %}" alt="Fernando Escalona" class="profile-img">
+        </div>
+        <div class="col-lg-8">
+            <h2 class="text-primary fw-bold mb-4">Más que un Coach, un compañero de viaje</h2>
+            <p class="fs-5 text-muted mb-4">
+                Hola, soy Fernando. Con más de <strong>25 años de experiencia</strong>, he dedicado mi vida a entender cómo funciona el cuerpo humano. Mi enfoque en <strong>NaturSur</strong> no es darte una dieta más, sino integrar la Osteopatía, la Nutrición y el Coaching para transformar tu estilo de vida desde la raíz.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4 my-5">
+        <div class="col-md-4">
+            <div class="stat-card text-center">
+                <div class="icon-box bg-success text-white mx-auto shadow-sm">
+                    <i class="bi bi-heart-pulse"></i>
+                </div>
+                <h4 class="fw-bold text-secondary">Cuerpo</h4>
+                <p class="text-muted">Osteopatía y masajes holísticos para aliviar tensiones y recuperar tu movilidad natural.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card text-center">
+                <div class="icon-box bg-warning text-white mx-auto shadow-sm">
+                    <i class="bi bi-apple"></i>
+                </div>
+                <h4 class="fw-bold text-secondary">Alimentación</h4>
+                <p class="text-muted">Nutrición consciente. No se trata de comer menos, sino de comer mejor para tener energía.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card text-center">
+                <div class="icon-box bg-primary text-white mx-auto shadow-sm">
+                    <i class="bi bi-lightbulb"></i>
+                </div>
+                <h4 class="fw-bold text-secondary">Mente</h4>
+                <p class="text-muted">Coaching transformacional para romper excusas y fortalecer tu compromiso contigo mismo.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center my-5 bg-light py-5 rounded-4">
+        <div class="col-12 text-center mb-4">
+            <span class="badge bg-primary mb-2">Recursos gratuitos</span>
+            <h2 class="fw-bold">Mis libros</h2>
+            <p class="text-muted">He plasmado mi metodología en estas guías para ayudarte a empezar hoy mismo.</p>
+        </div>
+
+        <div class="col-lg-10">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="ebook-card p-4 h-100 d-flex flex-column">
+                        <div class="ebook-badge">Popular</div>
+                        <h5 class="fw-bold text-dark mb-3">5 Trucos para tu mejor forma</h5>
+                        <p class="small text-muted flex-grow-1">Descubre los secretos que han ayudado a más de 10.000 personas.</p>
+                        <a href="https://wdtinfo.com/res/55873/326254" target="_blank" class="btn btn-outline-success btn-sm mt-3">Descargar E-book</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ebook-card p-4 h-100 d-flex flex-column">
+                        <h5 class="fw-bold text-dark mb-3">El cuerpo que deseas</h5>
+                        <p class="small text-muted flex-grow-1">¿Por qué no lo consigues? Rompe el ciclo de fracasos este año.</p>
+                        <a href="https://wdtinfo.com/res/55875/326254" target="_blank" class="btn btn-outline-success btn-sm mt-3">Descargar E-book</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ebook-card p-4 h-100 d-flex flex-column">
+                        <h5 class="fw-bold text-dark mb-3">Emprende en Wellness</h5>
+                        <p class="small text-muted flex-grow-1">¿Te encanta el fitness? Convierte tu pasión en un negocio rentable.</p>
+                        <a href="https://wdtinfo.com/res/55862/326254" target="_blank" class="btn btn-outline-success btn-sm mt-3">Descargar E-book</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">Sígueme en redes</h3>
+            <div class="d-flex justify-content-center mb-5">
+                <a href="https://www.instagram.com/yosoyescalona/?hl=es" target="_blank" class="social-btn bg-instagram" title="Instagram">
+                    <i class="bi bi-instagram"></i>
+                </a>
+                <a href="https://www.facebook.com/natursur" target="_blank" class="social-btn bg-facebook" title="Facebook">
+                    <i class="bi bi-facebook"></i>
+                </a>
+                <a href="https://www.youtube.com/@natursur" target="_blank" class="social-btn bg-youtube" title="YouTube">
+                    <i class="bi bi-youtube"></i>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
