@@ -1,3 +1,4 @@
+import threading
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.core.mail import send_mail
@@ -104,10 +105,14 @@ def enviar_aviso_cliente(sender, instance, **kwargs):
         
         Gracias por confiar en NutriSur.
         """
-        
-        try:
-            # Enviamos el correo al CLIENTE (instance.usuario.email)
-            send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [instance.usuario.email])
-            print(f"Correo de confirmación enviado a {instance.usuario.email}")
-        except Exception as e:
-            print(f"Error enviando correo al cliente: {e}")
+        def tarea_enviar_email():
+            try:
+                print(f"Hilo: Intentando enviar correo a {instance.usuario.email}...")
+                send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [instance.usuario.email])
+                print(f"Correo de confirmación enviado a {instance.usuario.email}")
+            except Exception as e:
+                print(f"Error enviando correo al cliente: {e}")        
+        email_thread = threading.Thread(target=tarea_enviar_email)
+        email_thread.start()
+
+            
