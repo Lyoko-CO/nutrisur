@@ -4,12 +4,13 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone 
 from .models import Cita
+import threading
 
 @receiver(post_save, sender=Cita)
 def avisar_nueva_cita(sender, instance, created, **kwargs):
     # Verificamos si la cita está en un estado que requiera aviso (Pendiente o Confirmada)
     # y evitamos enviar correo si está en borrador o cancelada.
-    if instance.estado in ['PENDIENTE', 'CONFIRMADA']:
+    if instance.estado in ['PENDIENTE']:
         
         # Formateamos la fecha para que sea legible (Día/Mes/Año Hora:Minuto)
         fecha_legible = "Fecha por confirmar"
@@ -39,11 +40,16 @@ def avisar_nueva_cita(sender, instance, created, **kwargs):
         https://nutrisur.onrender.com/admin/citas/cita/{instance.id}/change/
         """
         
-        try:
-            # Enviamos el correo al administrador
-            send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [settings.EMAIL_HOST_USER])
-        except Exception as e:
-            print(f"Error enviando correo cita: {e}")
+        def enviar_al_admin():
+            try:
+                print(f"📩 Hilo Citas: Avisando al admin de nueva cita de {instance.cliente_nombre}...")
+                send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [settings.EMAIL_HOST_USER])
+                print("✅ Hilo Citas: Correo al admin enviado.")
+            except Exception as e:
+                print(f"Error enviando correo cita: {e}")
+                
+        threading.Thread(target=enviar_al_admin).start()
+
             
             
 @receiver(pre_save, sender=Cita)
@@ -83,8 +89,12 @@ def enviar_email_confirmacion(sender, instance, **kwargs):
         ¡Te esperamos!
         """
         
-        try:
-            send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [instance.cliente_email])
-            print(f"Correo de cita confirmada enviado a {instance.cliente_email}")
-        except Exception as e:
-            print(f"Error enviando correo confirmación cita: {e}")
+        def enviar_al_cliente():
+            try:
+                print(f"📩 Hilo Citas: Confirmando cita a {instance.cliente_email}...")
+                send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [instance.cliente_email])
+                print("✅ Hilo Citas: Confirmación enviada al cliente.")
+            except Exception as e:
+                print(f"❌ Error Hilo Citas Cliente: {e}")
+        
+        threading.Thread(target=enviar_al_cliente).start()

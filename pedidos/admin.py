@@ -29,11 +29,29 @@ class PedidoAdmin(admin.ModelAdmin):
     
     @admin.action(description='Marcar como Pendiente')
     def marcar_como_pendiente(self, request, queryset):
-        queryset.update(estado='P')
+        # ANTES: queryset.update(estado='P')  <-- Esto no enviaba correos
+        
+        # AHORA: Recorremos y guardamos uno a uno
+        count = 0
+        for pedido in queryset:
+            pedido.estado = 'P'
+            pedido.save() # ¡AQUÍ ES DONDE SALTA LA SEÑAL!
+            count += 1
+            
+        self.message_user(request, f"{count} pedidos marcados como Pendientes.")
 
     @admin.action(description='Marcar como Realizado')
     def marcar_como_realizado(self, request, queryset):
-        queryset.update(estado='R')
+        # ANTES: queryset.update(estado='R')
+        
+        # AHORA:
+        count = 0
+        for pedido in queryset:
+            pedido.estado = 'R'
+            pedido.save() # Al hacer save(), se activa enviar_aviso_cliente en signals.py
+            count += 1
+            
+        self.message_user(request, f"{count} pedidos marcados como Realizados y correos enviados.")
 
 @admin.register(ConfiguracionChatbot)
 class ConfiguracionChatbotAdmin(admin.ModelAdmin):
