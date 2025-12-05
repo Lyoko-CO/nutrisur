@@ -229,3 +229,19 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  # <--- PON AQUÍ TU GMAIL
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD') # <--- AQUÍ TU CONTRASEÑA DE APLICACIÓN (No la normal)
 DEFAULT_FROM_EMAIL = F'NutriSur Admin <{EMAIL_HOST_USER}>'
+# --- INICIO DEL LOG DE DEBUG ---
+print("--------------------------------------------------")
+print(f"🕵️ DEBUG EMAIL USER: {EMAIL_HOST_USER}")
+
+if EMAIL_HOST_PASSWORD:
+    longitud = len(EMAIL_HOST_PASSWORD)
+    print(f"🕵️ DEBUG PASSWORD LENGTH: {longitud} caracteres")
+    
+    if longitud == 16:
+        print("✅ La longitud es CORRECTA (16 caracteres).")
+    else:
+        print(f"⚠️ ¡ATENCIÓN! La longitud es INCORRECTA. Tienes {longitud}, deberían ser 16.")
+        print("   Revisa si has copiado un espacio en blanco al final en Render.")
+else:
+    print("❌ ERROR: No se ha encontrado la contraseña en las variables de entorno.")
+print("--------------------------------------------------")

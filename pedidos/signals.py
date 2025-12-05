@@ -1,3 +1,5 @@
+import threading
+import time
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.core.mail import send_mail
@@ -19,10 +21,10 @@ def avisar_nuevo_usuario(sender, instance, created, **kwargs):
         Entra para revisar si es un cliente habitual:
         https://nutrisur.onrender.com/admin/usuarios/
         """
-        try:
-            send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [settings.EMAIL_HOST_USER])
-        except Exception as e:
-            print(f"Error enviando correo usuario: {e}")
+        threading.Thread(target=lambda: send_mail(
+            asunto, mensaje, settings.EMAIL_HOST_USER, [settings.EMAIL_HOST_USER]
+        )).start()
+    
 
 
 @receiver(post_save, sender=Pedido)
@@ -39,31 +41,58 @@ def avisar_nuevo_pedido(sender, instance, created, **kwargs):
             items_texto += f"- {item.cantidad} x {item.producto.nombre} ({item.subtotal} €)\n"
 
         # 2. CONSTRUIMOS EL MENSAJE
-        asunto = f"💰 Nuevo Pedido Recibido #{instance.id}"
-        mensaje = f"""
-        ¡Enhorabuena! Tienes una nueva venta confirmada.
         
-        ------------------------------------------
-        DETALLES DEL CLIENTE:
-        Cliente: {instance.usuario.nombre}
-        Email: {instance.usuario.email}
-        ------------------------------------------
+        def email_admin():
+            try:        
+                asunto = f"💰 Nuevo Pedido Recibido #{instance.id}"
+                mensaje = f"""
+                ¡Enhorabuena! Tienes una nueva venta confirmada.
+                
+                ------------------------------------------
+                DETALLES DEL CLIENTE:
+                Cliente: {instance.usuario.nombre}
+                Email: {instance.usuario.email}
+                ------------------------------------------
+                
+                CARRITO DE COMPRA:
+                {items_texto}
+                
+                ------------------------------------------
+                TOTAL DEL PEDIDO: {instance.calcular_total()} €
+                ------------------------------------------
+                
+                Gestionar pedido aquí:
+                https://nutrisur.onrender.com/admin/pedidos/pedido/{instance.id}/change/
+                """
+                send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [settings.EMAIL_HOST_USER])
+                print(f"Correo de nuevo pedido enviado al admin para el pedido #{instance.id}")
+            except Exception as e:
+                print(f"Error construyendo email para admin: {e}")
+                
+            
+        def email_cliente():
+            try:
+                asunto = f"✅ Pedido Confirmado #{instance.id} - NutriSur"
+                msj = f"""
+                Hola {instance.usuario.nombre},
+                
+                Hemos recibido tu pedido correctamente.
+                
+                RESUMEN DE COMPRA:
+                {items_texto}
+                --------------------
+                TOTAL: {instance.calcular_total()} €
+                --------------------
+                
+                Te avisaremos cuando lo enviemos.
+                """
+                # Enviamos al correo del usuario
+                send_mail(asunto, msj, settings.DEFAULT_FROM_EMAIL, [instance.usuario.email])
+            except: pass
         
-        CARRITO DE COMPRA:
-        {items_texto}
-        
-        ------------------------------------------
-        TOTAL DEL PEDIDO: {instance.calcular_total()} €
-        ------------------------------------------
-        
-        Gestionar pedido aquí:
-        https://nutrisur.onrender.com/admin/pedidos/pedido/{instance.id}/change/
-        """
-        
-        try:
-            send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [settings.EMAIL_HOST_USER])
-        except Exception as e:
-            print(f"Error enviando correo pedido: {e}")
+        threading.Thread(target=email_admin).start()
+        threading.Thread(target=email_cliente).start()
+
             
 @receiver(pre_save, sender=Pedido)
 def detectar_cambio_a_realizado(sender, instance, **kwargs):
@@ -104,10 +133,14 @@ def enviar_aviso_cliente(sender, instance, **kwargs):
         
         Gracias por confiar en NutriSur.
         """
-        
-        try:
-            # Enviamos el correo al CLIENTE (instance.usuario.email)
-            send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [instance.usuario.email])
-            print(f"Correo de confirmación enviado a {instance.usuario.email}")
-        except Exception as e:
-            print(f"Error enviando correo al cliente: {e}")
+        def tarea_enviar_email():
+            try:              
+                print(f"Hilo: Intentando enviar correo a {instance.usuario.email}...")
+                send_mail(asunto, mensaje, settings.DEFAULT_FROM_EMAIL, [instance.usuario.email])
+                print(f"Correo de confirmación enviado a {instance.usuario.email}")
+            except Exception as e:
+                print(f"Error enviando correo al cliente: {e}")        
+        email_thread = threading.Thread(target=tarea_enviar_email)
+        email_thread.start()
+
+            
