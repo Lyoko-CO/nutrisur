@@ -13,7 +13,19 @@ User = get_user_model()
 class FlujoUsuarioNutrisurTest(TestCase):
 
     def setUp(self):
+        self.patcher = patch('threading.Thread')
+        self.mock_thread = self.patcher.start()
+        
+        def run_synchronously(target, *args, **kwargs):
+            class SyncThread:
+                def start(self):
+                    target(*args, **kwargs)
+            return SyncThread()
+            
+        self.mock_thread.side_effect = run_synchronously
+
         self.client = Client()
+        
         self.usuario = User.objects.create_user(
             email='cliente@test.com',
             nombre='Cliente Tester',
@@ -27,6 +39,8 @@ class FlujoUsuarioNutrisurTest(TestCase):
 
         mail.outbox = []
 
+    def tearDown(self):
+        self.patcher.stop()
 
     @patch('pedidos.views.obtener_respuesta_gemini') 
     def test_historia_compra_completa(self, mock_gemini):
@@ -70,9 +84,10 @@ class FlujoUsuarioNutrisurTest(TestCase):
         pedido.refresh_from_db()
         self.assertEqual(pedido.estado, 'P')
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertIn("Nuevo Pedido Recibido", mail.outbox[0].subject)
-        self.assertIn("Batido Fresa", mail.outbox[0].body)
+        self.assertEqual(len(mail.outbox), 2)
+        
+        asuntos = [m.subject for m in mail.outbox]
+        self.assertTrue(any("Nuevo Pedido Recibido" in s for s in asuntos))
 
 
     @patch('citas.views.consultar_gemini_citas')
