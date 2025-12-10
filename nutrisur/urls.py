@@ -32,6 +32,8 @@ urlpatterns = [
     path('usuarios/', include('usuarios.urls')),
     path('citas/', include('citas.urls')),
     path('sobre-mi/', views.sobre_mi_view, name='sobre_mi'),
+    path('terminos-y-condiciones/', views.terminos_view, name='terminos'),
+    path('politica-de-privacidad/', views.privacidad_view, name='privacidad'),
 ]
 
 if settings.DEBUG:
