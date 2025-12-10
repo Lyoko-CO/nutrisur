@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Términos de Uso - NutriSur{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-10 offset-lg-1">
+            <h1 class="mb-4">Términos y Condiciones de Uso</h1>
+            <p class="text-muted">Última actualización: Noviembre 2025</p>
+            
+            <hr>
+
+            <h3>1. Introducción</h3>
+            <p>Bienvenido a <strong>NutriSur</strong>. Al acceder a nuestro sitio web y utilizar nuestros servicios (incluyendo la compra de productos, reserva de citas y uso del asistente virtual), usted acepta cumplir con estos términos y condiciones.</p>
+
+            <h3>2. Uso del Sitio</h3>
+            <p>Usted se compromete a utilizar nuestro sitio web únicamente con fines legales y de una manera que no infrinja los derechos de, restrinja o inhiba el uso y disfrute del sitio por parte de cualquier tercero.</p>
+
+            <h3>3. Registro de Cuenta</h3>
+            <p>Para acceder a ciertas funciones, como el historial de pedidos o citas, debe registrarse. Usted es responsable de mantener la confidencialidad de su cuenta y contraseña.</p>
+
+            <h3>4. Productos y Pedidos</h3>
+            <p>Nos esforzamos por mostrar con precisión los colores y las imágenes de nuestros productos. Nos reservamos el derecho de limitar las ventas de nuestros productos a cualquier persona o región geográfica.</p>
+
+            <h3>5. Citas y Reservas</h3>
+            <p>Las citas reservadas a través de nuestro sistema están sujetas a disponibilidad. Nos reservamos el derecho de reprogramar o cancelar citas por motivos operativos, notificándole con la mayor antelación posible.</p>
+
+            <h3>6. Asistente Virtual (IA)</h3>
+            <p>Nuestro sitio utiliza inteligencia artificial (Google Gemini) para asistirle. Aunque nos esforzamos por la precisión, la información proporcionada por el chatbot es orientativa y no sustituye el consejo médico profesional.</p>
+
+            <h3>7. Modificaciones</h3>
+            <p>NutriSur se reserva el derecho de revisar estos términos en cualquier momento. El uso continuado del sitio tras cualquier cambio constituirá su aceptación de dichos cambios.</p>
+            
+            <div class="mt-5 text-center">
+                <a href="{% url 'home' %}" class="btn btn-outline-primary">Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,16 +1,23 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
+from django import forms
 # ¡Importa esto para manejar los errores correctamente!
-from django.core.exceptions import ValidationError 
+from django.core.exceptions import ValidationError
 
-User = get_user_model() 
+User = get_user_model()
 
 class CustomUserCreationForm(UserCreationForm):
     """
-    Un formulario de creación de usuario que funciona con 
+    Un formulario de creación de usuario que funciona con
     nuestro CustomUser (que usa 'email' como username).
     """
     
+    terminos = forms.BooleanField(
+        required=True,
+        label="He leído y acepto los términos de uso y la política de privacidad",
+        error_messages={'required': 'Debes aceptar los términos para registrarte.'}
+    )
+
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ('email', 'nombre', 'telefono')
@@ -18,11 +25,11 @@ class CustomUserCreationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Asumiendo que el teléfono es opcional, como en tu modelo
-        self.fields['telefono'].required = False 
+        self.fields['telefono'].required = False
         
     
     # --- ¡ESTA ES LA CORRECCIÓN MÁS IMPORTANTE! ---
-    # Sobrescribimos el método 'save' para que SÍ use 
+    # Sobrescribimos el método 'save' para que SÍ use
     # nuestro manager 'create_user'
     
     def save(self, commit=True):

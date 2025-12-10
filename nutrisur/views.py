@@ -17,3 +17,9 @@ def opciones_compra_view(request):
 
 def sobre_mi_view(request):
     return render(request, 'sobre_mi.html')
+
+def terminos_view(request):
+    return render(request, 'legales/terminos.html')
+
+def privacidad_view(request):
+    return render(request, 'legales/privacidad.html')

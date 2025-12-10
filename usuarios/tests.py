@@ -118,7 +118,8 @@ class UsuariosViewTests(TestCase):
             'nombre': 'Nuevo Usuario',
             'telefono': '666000111',
             'password1': 'segura123',
-            'password2': 'segura123'
+            'password2': 'segura123',
+            'terminos': True
         }
         response = self.client.post(self.registro_url, data)
         
@@ -137,7 +138,8 @@ class UsuariosViewTests(TestCase):
             'nombre': 'Impostor',
             'telefono': '123456789',
             'password1': 'pass',
-            'password2': 'pass'
+            'password2': 'pass',
+            'terminos': True
         }
         response = self.client.post(self.registro_url, data)
         
@@ -154,7 +156,8 @@ class UsuariosViewTests(TestCase):
             'nombre': 'Bad Pass',
             'telefono': '123456789',
             'password1': 'clave1',
-            'password2': 'clave2'
+            'password2': 'clave2',
+            'terminos': True
         }
         response = self.client.post(self.registro_url, data)
         
