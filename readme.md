@@ -1,6 +1,6 @@
 #  NUTRISUR 🏆
 
-![Badge en Desarrollo](https://img.shields.io/badge/STATUS-EN%20DESARROLLO-green)  
+![Badge Version](https://img.shields.io/badge/VERSIÓN-1.0.0-blue)  
 <img src="static\images\lyoko-logo.jpg" alt="Logo Lyoko" width="20%">  
 
 **Nutrisur** es una aplicación web diseñada para [Fernando Escalona](https://www.instagram.com/fernandoescalona78/?hl=es), CEO de Natursur, con el objetivo aunar sus dos líneas de negocio relacionadas con la salud: la compra de productos alimenticios y la gestión de citas de servicios como masajes o asesoramiento nutricional.
@@ -45,8 +45,10 @@ Sigue estos pasos para levantar el proyecto en tu entorno local en Windows:
     Crea un archivo `.env` en la raíz del proyecto y añade la siguiente variable:
     ```env
     GEMINI_API_KEY=<api_secreta_de_gemini>
+    EMAIL_HOST_USER=<usuario_correo>
+    EMAIL_HOST_PASSWORD=<contraseña_correo>
     ```
-    Nota: debes utilizar tu propia API de Gemini para utilizar el chatbot.
+    Nota: debes utilizar tu propia API de Gemini para utilizar el chatbot y tu propia cuenta de correo electrónico con la que enviar/recibir mensajes de confirmación.
 
 6.  **Inicia el servidor de desarrollo.**
     ```bash
