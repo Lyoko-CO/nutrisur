@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Política de Privacidad - NutriSur{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-10 offset-lg-1">
+            <h1 class="mb-4">Política de Privacidad</h1>
+            <p class="text-muted">En NutriSur, nos tomamos muy en serio la privacidad de sus datos.</p>
+            
+            <hr>
+
+            <h3>1. Responsable del Tratamiento</h3>
+            <p><strong>Identidad:</strong> NutriSur<br>
+            <strong>Domicilio:</strong> Av. Santa Lucia 62, Alcalá de Guadaíra, Sevilla<br>
+            <strong>Email:</strong> contacto@nutrisur.com</p>
+
+            <h3>2. Información que Recopilamos</h3>
+            <ul>
+                <li><strong>Datos de Identificación:</strong> Nombre, correo electrónico, teléfono (al registrarse).</li>
+                <li><strong>Datos de Transacción:</strong> Historial de pedidos y productos comprados.</li>
+                <li><strong>Datos de Salud/Bienestar:</strong> Observaciones o dolencias que usted proporcione voluntariamente al reservar una cita para adaptar el servicio.</li>
+            </ul>
+
+            <h3>3. Finalidad del Tratamiento</h3>
+            <p>Sus datos se utilizan para:</p>
+            <ul>
+                <li>Gestionar su registro y cuenta de usuario.</li>
+                <li>Procesar sus pedidos de productos.</li>
+                <li>Gestionar y confirmar sus citas de bienestar.</li>
+                <li>Mejorar nuestro servicio de atención al cliente mediante nuestro Chatbot.</li>
+            </ul>
+
+            <h3>4. Uso de Inteligencia Artificial</h3>
+            <p>Para ofrecerle asistencia instantánea, utilizamos la tecnología de <strong>Google Gemini</strong>. Los mensajes que usted envía al chatbot son procesados para generar respuestas. No compartimos sus datos personales con terceros para fines publicitarios.</p>
+
+            <h3>5. Sus Derechos</h3>
+            <p>Usted tiene derecho a acceder, rectificar y suprimir sus datos, así como a limitar su tratamiento, contactándonos a través de nuestro correo electrónico.</p>
+            
+            <div class="mt-5 text-center">
+                <a href="{% url 'home' %}" class="btn btn-outline-primary">Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
