@@ -64,5 +64,5 @@ Sigue estos pasos para levantar el proyecto en tu entorno local en Windows:
 
 * **Max Cameron Corti** - *Project Manager* - [[Enlace al perfil de GitHub](https://github.com/MaxCorti)]
 * **Francisco Ayala Díaz** - *Desarrollador y tester* - [[Enlace al perfil de GitHub](https://github.com/CurroAyala)]
-* **Nicolás Parrilla Geniz** - *Analista, desarrollador y tester* - [[Enlace al perfil de GitHub](https://github.com/QHX0329)]
+* **Nicolás Parrilla Geniz** - *Analista, desarrollador y tester* - [[Enlace al perfil de GitHub](https://github.com/Nicoparri)]
 * **Javier Luque Ruiz** - *Desarrollador y tester* - [[Enlace al perfil de GitHub](https://github.com/Javierluqueruiz)]
